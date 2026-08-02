@@ -1,0 +1,14 @@
+#Maven build directory
+target/
+
+#Eclipse project files
+.project
+.classpath
+.settings/
+
+#Logs
+*.log
+
+#OS-specific files
+.DS_Store
+Thumbs.db
