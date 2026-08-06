@@ -1,5 +1,51 @@
 package hu.betti.automation.notesapp.pages;
 
-public class NotesPage {
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+
+import hu.betti.automation.notesapp.base.BasePage;
+
+public class NotesPage extends BasePage {
+	
+	  // Locators
+    private final By addNoteButton =
+            By.cssSelector("[data-testid='add-new-note']");
+
+    private final By profileButton =
+            By.cssSelector("[data-testid='profile']");
+
+    private final By logoutButton =
+            By.cssSelector("[data-testid='logout']");
+    
+    private final By searchField =
+            By.cssSelector("[data-testid='search-input']");
+
+    private final By searchButton =
+            By.cssSelector("[data-testid='search-btn']");
+    
+    // Constructor
+	public NotesPage(WebDriver driver) {
+		super(driver);
+		// TODO Auto-generated constructor stub
+	}
+	
+	public boolean isLoaded() {
+	     return waitVisible(addNoteButton).isDisplayed();
+	    }
+
+	public ProfilePage clickProfile() {
+	      click(profileButton);
+	      return new ProfilePage(driver);
+	    }
+
+	 public HomePage clickLogout() {
+	      click(logoutButton);
+	      return new HomePage(driver);
+	    }
+	 
+	 public void search(String text) {
+		    type(searchField, text);
+		    click(searchButton);
+		}
 
 }

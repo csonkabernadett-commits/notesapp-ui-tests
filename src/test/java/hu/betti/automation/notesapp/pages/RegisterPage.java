@@ -44,7 +44,6 @@ public class RegisterPage extends BasePage {
 	}
 
 	public void clickRegister() {
-		scrollIntoView(registerButton);
 		click(registerButton);
 	}
 

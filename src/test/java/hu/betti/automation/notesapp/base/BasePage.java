@@ -39,6 +39,7 @@ public class BasePage {
 	
 	//Interaction
 	protected void click(By locator) {
+	    scrollIntoView(locator);
 	    waitClickable(locator).click();
 	}
 
