@@ -1,6 +1,7 @@
 package hu.betti.automation.notesapp.base;
 
 import java.time.Duration;
+import org.openqa.selenium.JavascriptExecutor;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -53,4 +54,13 @@ public class BasePage {
 	    return driver.getTitle();
 	}
 
+	// Google Ads reklám takarja a Register gombot.Scrollozza a gombot a képernyő közepére
+	protected void scrollIntoView(By locator) {
+	    WebElement element = waitVisible(locator);
+
+	    ((JavascriptExecutor) driver).executeScript(
+	            "arguments[0].scrollIntoView({block: 'center'});",
+	            element);
+	}
+	
 }

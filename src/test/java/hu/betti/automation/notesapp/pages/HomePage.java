@@ -13,10 +13,12 @@ public class HomePage extends BasePage {
 	private final By welcomeTitle = By.tagName("h1");
 	
 	
+	// Constructor
 	public HomePage(WebDriver driver) {
 		super(driver);
 	}
 
+	
     public void open() {
         driver.get(URL);
     }
