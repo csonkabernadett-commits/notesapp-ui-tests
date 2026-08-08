@@ -44,9 +44,9 @@ public class LoginPage extends BasePage {
 	}
     
 	public NotesPage clickLogin() {
-		click(loginButton);
-		return new NotesPage(driver);
+	    click(loginButton);
+	    return new NotesPage(driver);
 	}
+}
 	
 
-}

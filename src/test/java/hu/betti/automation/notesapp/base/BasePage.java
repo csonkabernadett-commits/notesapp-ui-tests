@@ -2,12 +2,13 @@ package hu.betti.automation.notesapp.base;
 
 import java.time.Duration;
 import org.openqa.selenium.JavascriptExecutor;
-
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 
 public class BasePage {
 	
@@ -39,8 +40,23 @@ public class BasePage {
 	
 	//Interaction
 	protected void click(By locator) {
-	    scrollIntoView(locator);
-	    waitClickable(locator).click();
+
+	    for (int i = 0; i < 3; i++) {
+	        try {
+	            WebElement element = waitClickable(locator);
+	            
+	            scrollIntoView(element);
+	            
+	            element.click();
+	            return;
+
+	        } catch (StaleElementReferenceException e) {
+	            // DOM újrarenderelődött, újra megkeressük az elemet
+	        }
+	    }
+
+	    throw new StaleElementReferenceException(
+	            "Element remained stale after 3 attempts: " + locator);
 	}
 
 	protected void type(By locator, String text) {
@@ -55,13 +71,18 @@ public class BasePage {
 	    return driver.getTitle();
 	}
 
-	// Google Ads reklám takarja a Register gombot.Scrollozza a gombot a képernyő közepére
-	protected void scrollIntoView(By locator) {
-	    WebElement element = waitVisible(locator);
-
+	// Scrolls the element into the center of the viewport
+	protected void scrollIntoView(WebElement element) {
 	    ((JavascriptExecutor) driver).executeScript(
 	            "arguments[0].scrollIntoView({block: 'center'});",
 	            element);
 	}
 	
+	//CreateManyNotesTest - UI-renderelési probléma miatt
+	protected void waitForNumberOfElements(By locator, int number) {
+	    wait.until(
+	        ExpectedConditions.numberOfElementsToBe(locator, number)
+	    );
+	}
 }
+	

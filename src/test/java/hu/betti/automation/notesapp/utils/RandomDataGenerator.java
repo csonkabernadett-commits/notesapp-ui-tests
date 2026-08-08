@@ -15,5 +15,10 @@ public class RandomDataGenerator {
     public static String generatePassword() {
         return "Password123!";
     }
+    
+    public static String generateNoteTitle() {
+        return "Automated note " 
+                + UUID.randomUUID().toString().substring(0, 8);
+    }
 
 }

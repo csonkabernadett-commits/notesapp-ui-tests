@@ -23,10 +23,13 @@ public class NotesPage extends BasePage {
     private final By searchButton =
             By.cssSelector("[data-testid='search-btn']");
     
+    private final By noteCards =
+            By.cssSelector("[data-testid='note-card']");
+          
+    
     // Constructor
 	public NotesPage(WebDriver driver) {
 		super(driver);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public boolean isLoaded() {
@@ -47,5 +50,26 @@ public class NotesPage extends BasePage {
 		    type(searchField, text);
 		    click(searchButton);
 		}
+	 
+	 public AddNoteModal clickAddNote() {
+		    click(addNoteButton);
+		    return new AddNoteModal(driver);
+		}
+	 
+	 public boolean isNoteDisplayed(String title) {
+		    By noteTitle = By.xpath(
+		        "//div[@data-testid='note-card-title' and normalize-space()='" + title + "']"
+		    );
+		    return waitVisible(noteTitle).isDisplayed();
+		}
+	 
+	 public int getNoteCount() {
+		    return driver.findElements(noteCards).size();
+		}
+	 
+	 public void waitForNoteCount(int expectedCount) {
+		    waitForNumberOfElements(noteCards, expectedCount);
+		}
+	 
 
 }
