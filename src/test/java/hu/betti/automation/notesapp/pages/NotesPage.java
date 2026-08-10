@@ -26,6 +26,13 @@ public class NotesPage extends BasePage {
     private final By noteCards =
             By.cssSelector("[data-testid='note-card']");
           
+    private final By deleteConfirmButton =
+            By.cssSelector("[data-testid='note-delete-confirm']");
+
+    private final By deleteCancelButton =
+            By.cssSelector("[data-testid='note-delete-cancel-2']");
+    
+    
     
     // Constructor
 	public NotesPage(WebDriver driver) {
@@ -71,5 +78,24 @@ public class NotesPage extends BasePage {
 		    waitForNumberOfElements(noteCards, expectedCount);
 		}
 	 
+	 public void deleteNote(String title) {
 
+		    By deleteButton = By.xpath(
+		        "//div[@data-testid='note-card']"
+		        + "[.//div[@data-testid='note-card-title' "
+		        + "and normalize-space()='" + title + "']"
+		        + "]"
+		        + "//button[@data-testid='note-delete']"
+		    );
+
+		    click(deleteButton);
+		}
+	 
+	 public void confirmDelete() {
+		    click(deleteConfirmButton);
+		}
+	 
+	 public void cancelDelete() {
+		    click(deleteCancelButton);
+		}
 }
