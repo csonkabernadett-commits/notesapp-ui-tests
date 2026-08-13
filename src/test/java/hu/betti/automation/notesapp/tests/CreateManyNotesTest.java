@@ -17,7 +17,7 @@ public class CreateManyNotesTest extends BaseTest{
 
 	
 	@Test
-	void create101Notes() {
+	void createManyNotes() {
 
 	    // Arrange
 		

@@ -2,10 +2,12 @@ package hu.betti.automation.notesapp.base;
 
 import java.time.Duration;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -83,6 +85,16 @@ public class BasePage {
 	    wait.until(
 	        ExpectedConditions.numberOfElementsToBe(locator, number)
 	    );
+	}
+	
+	protected void clear(By locator) {
+	    waitVisible(locator).clear();
+	}
+	
+	public void scrollToBottom() {
+	    new Actions(driver)
+	            .sendKeys(Keys.END)
+	            .perform();
 	}
 }
 	

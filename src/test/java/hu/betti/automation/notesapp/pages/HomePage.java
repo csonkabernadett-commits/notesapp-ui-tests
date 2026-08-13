@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 import hu.betti.automation.notesapp.base.BasePage;
+import org.openqa.selenium.JavascriptExecutor;
 
 public class HomePage extends BasePage {
 
@@ -11,7 +12,8 @@ public class HomePage extends BasePage {
 	private final By loginButton = By.linkText("Login");
 	private final By createAccountButton = By.cssSelector("[data-testid='open-register-view']");
 	private final By welcomeTitle = By.tagName("h1");
-	
+	private final By privacySettingsButton =
+	        By.cssSelector("#ft-floating-toolbar .ft-reg-message-button");
 	
 	// Constructor
 	public HomePage(WebDriver driver) {
@@ -37,7 +39,15 @@ public class HomePage extends BasePage {
         return getText(welcomeTitle);
     }
 
-
+    public void clickPrivacySettings() {
+        click(privacySettingsButton);
+    }
+    
+    public void scrollToBottom() {
+        ((JavascriptExecutor) driver).executeScript(
+                "window.scrollTo(0, document.body.scrollHeight);"
+        );
+    }
 }
 
 

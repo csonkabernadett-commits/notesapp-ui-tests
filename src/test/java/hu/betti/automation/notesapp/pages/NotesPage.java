@@ -4,6 +4,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 import hu.betti.automation.notesapp.base.BasePage;
+import java.util.List;
+import org.openqa.selenium.WebElement;
 
 public class NotesPage extends BasePage {
 	
@@ -32,8 +34,10 @@ public class NotesPage extends BasePage {
     private final By deleteCancelButton =
             By.cssSelector("[data-testid='note-delete-cancel-2']");
     
+    private final By progressInfo =
+            By.cssSelector("[data-testid='progress-info']");
     
-    
+       
     // Constructor
 	public NotesPage(WebDriver driver) {
 		super(driver);
@@ -74,6 +78,35 @@ public class NotesPage extends BasePage {
 		    return driver.findElements(noteCards).size();
 		}
 	 
+	 public boolean areNotesDisplayed(List<String> expectedTitles) {
+
+		    List<WebElement> cards = driver.findElements(noteCards);
+
+		    for (String title : expectedTitles) {
+
+		        boolean found = false;
+
+		        for (WebElement card : cards) {
+
+		            String cardTitle = card.findElement(
+		                    By.cssSelector("[data-testid='note-card-title']")
+		            ).getText();
+
+		            if (cardTitle.equals(title)) {
+		                found = true;
+		                break;
+		            }
+		        }
+
+		        if (!found) {
+		            return false;
+		        }
+		    }
+
+		    return true;
+		}
+	 
+	 
 	 public void waitForNoteCount(int expectedCount) {
 		    waitForNumberOfElements(noteCards, expectedCount);
 		}
@@ -91,11 +124,42 @@ public class NotesPage extends BasePage {
 		    click(deleteButton);
 		}
 	 
+	 public EditNoteModal editNote(String title) {
+
+		    By editButton = By.xpath(
+		        "//div[@data-testid='note-card']"
+		        + "[.//div[@data-testid='note-card-title' "
+		        + "and normalize-space()='" + title + "']"
+		        + "]"
+		        + "//button[@data-testid='note-edit']"
+		    );
+
+		    click(editButton);
+
+		    return new EditNoteModal(driver);
+		}
+	 
 	 public void confirmDelete() {
 		    click(deleteConfirmButton);
 		}
 	 
 	 public void cancelDelete() {
 		    click(deleteCancelButton);
+		}
+	 
+	 public void logout() {
+		    click(logoutButton);
+		}
+	 
+	 public void selectCategory(String category) {
+		    By categoryButton = By.cssSelector(
+		        "[data-testid='category-" + category.toLowerCase() + "']"
+		    );
+
+		    click(categoryButton);
+		}
+
+		public String getProgressInfo() {
+		    return getText(progressInfo);
 		}
 }
