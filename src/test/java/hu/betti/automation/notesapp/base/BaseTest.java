@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.Dimension;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -27,21 +28,27 @@ public class BaseTest {
 
 	    ChromeOptions options = new ChromeOptions();
 
-	    // Use a clean browser session.
 	    options.addArguments("--incognito");
 
-	    // CI environment
 	    if (System.getProperty("CI") != null) {
 	        options.addArguments("--headless=new");
 	        options.addArguments("--window-size=1920,1080");
+	        options.addArguments("--force-device-scale-factor=1");
 	    }
 
 	    ChromeDriver chromeDriver = new ChromeDriver(options);
 
-	    // Enable network control through Chrome DevTools Protocol.
+	    // CI-ben explicit méretet állítunk be.
+	    // Helyben marad a normál maximalizált Chrome.
+	    if (System.getProperty("CI") != null) {
+	        chromeDriver.manage().window().setSize(new Dimension(1920, 1080));
+	    } else {
+	        chromeDriver.manage().window().maximize();
+	    }
+
+	    // Reklámblokkolás marad.
 	    chromeDriver.executeCdpCommand("Network.enable", Map.of());
 
-	    // Block selected advertising network requests.
 	    chromeDriver.executeCdpCommand(
 	        "Network.setBlockedURLs",
 	        Map.of("urls", List.of(
@@ -53,11 +60,6 @@ public class BaseTest {
 	    );
 
 	    driver = chromeDriver;
-
-	 // CSAK NEM CI-BEN maximalizálunk
-	    if (System.getProperty("CI") == null) {
-	        driver.manage().window().maximize();
-	    }
 	}
 
 	// ==================== Teardown ====================
