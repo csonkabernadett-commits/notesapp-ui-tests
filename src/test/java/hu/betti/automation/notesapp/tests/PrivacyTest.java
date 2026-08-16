@@ -4,110 +4,107 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
 import hu.betti.automation.notesapp.pages.HomePage;
 
 public class PrivacyTest {
 
-	private WebDriver driver;
+    private WebDriver driver;
 
-	@BeforeEach
-	void setUp() {
+    @BeforeEach
+    void setUp() {
 
-		WebDriverManager.chromedriver().setup();
+        WebDriverManager.chromedriver().setup();
 
-		ChromeOptions options = new ChromeOptions();
-		//options.addArguments("--start-maximized");
+        ChromeOptions options = new ChromeOptions();
 
-		// No ad blocking: this test uses the normal page environment.
-		driver = new ChromeDriver(options);
+        // CI környezetben headless mód
+        options.addArguments("--headless=new");
 
-		//CI környezetben headless mód 
-		 options.addArguments("--headless=new");
-		  
-		 // Full HD felbontás 
-		 options.addArguments("--window-size=1920,1080");
-		 
-		 // CI környezethez 
-		 options.addArguments("--disable-gpu");
-		 options.addArguments("--no-sandbox");
-		 options.addArguments("--disable-dev-shm-usage");
-		 
+        // Full HD felbontás
+        options.addArguments("--window-size=1920,1080");
 
-		ChromeDriver chromeDriver = new ChromeDriver(options);
+        // CI környezethez
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
 
-		driver = chromeDriver;
-	}
-	
-	JavascriptExecutor js = (JavascriptExecutor) driver;
+        // Nincs reklámblokkolás a PrivacyTest-ben.
+        driver = new ChromeDriver(options);
+    }
 
-	Object result = js.executeScript("""
-	    const result = [];
+    @AfterEach
+    void tearDown() {
 
-	    function inspect(root, level) {
-	        const elements = root.querySelectorAll('*');
+        if (driver != null) {
+            driver.quit();
+        }
+    }
 
-	        for (const el of elements) {
-	            if (el.id === 'ft-floating-toolbar') {
-	                result.push(
-	                    'FOUND toolbar: ' +
-	                    el.tagName +
-	                    ' id=' +
-	                    el.id +
-	                    ' level=' +
-	                    level
-	                );
-	            }
+    @Test
+    void privacySettingsTest() {
 
-	            if (el.shadowRoot) {
-	                result.push(
-	                    'SHADOW ROOT: ' +
-	                    el.tagName +
-	                    ' id=' +
-	                    (el.id || '')
-	                );
+        HomePage homePage = new HomePage(driver);
 
-	                inspect(el.shadowRoot, level + 1);
-	            }
-	        }
-	    }
+        homePage.open();
 
-	    result.push(
-	        'DIRECT: ' +
-	        (document.querySelector('#ft-floating-toolbar') !== null)
-	    );
+        // Privacy DOM diagnosztika
+        JavascriptExecutor js = (JavascriptExecutor) driver;
 
-	    inspect(document, 0);
+        Object result = js.executeScript("""
+            const result = [];
 
-	    return result;
-	""");
+            function inspect(root, level) {
+                const elements = root.querySelectorAll('*');
 
-	System.out.println("=== PRIVACY DOM DIAGNOSTICS ===");
-	System.out.println(result);
+                for (const el of elements) {
 
-	@AfterEach
-	void tearDown() {
-		if (driver != null) {
-			driver.quit();
-		}
-	}
+                    if (el.id === 'ft-floating-toolbar') {
+                        result.push(
+                            'FOUND toolbar: ' +
+                            el.tagName +
+                            ' id=' +
+                            el.id +
+                            ' level=' +
+                            level
+                        );
+                    }
 
-	//@RepeatedTest(10)
-	@Test
-	void privacySettingsTest() {
+                    if (el.shadowRoot) {
+                        result.push(
+                            'SHADOW ROOT: ' +
+                            el.tagName +
+                            ' id=' +
+                            (el.id || '')
+                        );
 
-		HomePage homePage = new HomePage(driver);
+                        inspect(el.shadowRoot, level + 1);
+                    }
+                }
+            }
 
-		homePage.open();
-		homePage.scrollToPrivacy();
-		homePage.clickPrivacyIcon();
+            result.push(
+                'DIRECT: ' +
+                (document.querySelector('#ft-floating-toolbar') !== null)
+            );
 
-		assertTrue(homePage.isPrivacySettingsDisplayed());
-	}
+            inspect(document, 0);
+
+            return result;
+        """);
+
+        System.out.println("=== PRIVACY DOM DIAGNOSTICS ===");
+        System.out.println(result);
+
+        homePage.scrollToPrivacy();
+        homePage.clickPrivacyIcon();
+
+        assertTrue(homePage.isPrivacySettingsDisplayed());
+    }
 }
