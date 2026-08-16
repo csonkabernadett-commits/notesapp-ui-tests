@@ -53,7 +53,7 @@ public class BaseTest {
 		chromeDriver.executeCdpCommand("Network.setBlockedURLs", Map.of("urls", List.of("*doubleclick.net/*",
 				"*googlesyndication.com/*", "*googleadservices.com/*", "*adservice.google.com/*")));
 
-		//driver = chromeDriver;
+		  driver = chromeDriver;
 	}
 
 	// ==================== Teardown ====================
