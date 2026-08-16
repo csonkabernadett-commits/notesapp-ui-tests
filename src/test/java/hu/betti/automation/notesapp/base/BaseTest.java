@@ -38,15 +38,21 @@ public class BaseTest {
 
 	    ChromeDriver chromeDriver = new ChromeDriver(options);
 
-	    // CI-ben explicit méretet állítunk be.
-	    // Helyben marad a normál maximalizált Chrome.
 	    if (System.getProperty("CI") != null) {
-	        chromeDriver.manage().window().setSize(new Dimension(1920, 1080));
+	        chromeDriver.executeCdpCommand(
+	            "Emulation.setDeviceMetricsOverride",
+	            Map.of(
+	                "width", 1920,
+	                "height", 1080,
+	                "deviceScaleFactor", 1,
+	                "mobile", false
+	            )
+	        );
 	    } else {
 	        chromeDriver.manage().window().maximize();
 	    }
-
-	    // Reklámblokkolás marad.
+	    
+	    
 	    chromeDriver.executeCdpCommand("Network.enable", Map.of());
 
 	    chromeDriver.executeCdpCommand(
