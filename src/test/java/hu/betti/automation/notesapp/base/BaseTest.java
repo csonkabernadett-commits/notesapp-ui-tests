@@ -54,7 +54,10 @@ public class BaseTest {
 
 	    driver = chromeDriver;
 
-	    driver.manage().window().maximize();
+	 // CSAK NEM CI-BEN maximalizálunk
+	    if (System.getProperty("CI") == null) {
+	        driver.manage().window().maximize();
+	    }
 	}
 
 	// ==================== Teardown ====================
