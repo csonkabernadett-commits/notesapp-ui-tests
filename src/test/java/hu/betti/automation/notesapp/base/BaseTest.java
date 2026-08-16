@@ -29,21 +29,19 @@ public class BaseTest {
 		ChromeOptions options = new ChromeOptions();
 
 		// Start Chrome maximized.
-		options.addArguments("--start-maximized");
+		//options.addArguments("--start-maximized");
 
-		/*
-		 * CI környezetben headless mód 
-		 * options.addArguments("--headless=new");
-		 * 
-		 * // Full HD felbontás 
-		 * options.addArguments("--window-size=1920,1080");
-		 * 
-		 * // CI környezethez 
-		 * options.addArguments("--disable-gpu");
-		 * options.addArguments("--no-sandbox");
-		 * options.addArguments("--disable-dev-shm-usage");
-		 */
-
+		// CI környezetben headless mód 
+		options.addArguments("--headless=new");
+		 
+	    // Full HD felbontás 
+		options.addArguments("--window-size=1920,1080");
+		 
+		// CI környezethez 
+		options.addArguments("--disable-gpu");
+		options.addArguments("--no-sandbox");
+		options.addArguments("--disable-dev-shm-usage");
+		
 		ChromeDriver chromeDriver = new ChromeDriver(options);
 
 		// Enable network control through Chrome DevTools Protocol.
