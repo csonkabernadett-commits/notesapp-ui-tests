@@ -23,25 +23,38 @@ public class BaseTest {
 	@BeforeEach
 	void setUp() {
 
-		// Set up ChromeDriver automatically.
-		WebDriverManager.chromedriver().setup();
+	    WebDriverManager.chromedriver().setup();
 
-		ChromeOptions options = new ChromeOptions();
+	    ChromeOptions options = new ChromeOptions();
 
-		// Start Chrome maximized.
-		options.addArguments("--window-size=1920,1080");
+	    // Use a clean browser session.
+	    options.addArguments("--incognito");
 
+	    // CI environment
+	    if (System.getProperty("CI") != null) {
+	        options.addArguments("--headless=new");
+	        options.addArguments("--window-size=1920,1080");
+	    }
 
-		ChromeDriver chromeDriver = new ChromeDriver(options);
+	    ChromeDriver chromeDriver = new ChromeDriver(options);
 
-		// Enable network control through Chrome DevTools Protocol.
-		chromeDriver.executeCdpCommand("Network.enable", Map.of());
+	    // Enable network control through Chrome DevTools Protocol.
+	    chromeDriver.executeCdpCommand("Network.enable", Map.of());
 
-		// Block selected advertising network requests.
-		chromeDriver.executeCdpCommand("Network.setBlockedURLs", Map.of("urls", List.of("*doubleclick.net/*",
-				"*googlesyndication.com/*", "*googleadservices.com/*", "*adservice.google.com/*")));
+	    // Block selected advertising network requests.
+	    chromeDriver.executeCdpCommand(
+	        "Network.setBlockedURLs",
+	        Map.of("urls", List.of(
+	            "*doubleclick.net/*",
+	            "*googlesyndication.com/*",
+	            "*googleadservices.com/*",
+	            "*adservice.google.com/*"
+	        ))
+	    );
 
-		driver = chromeDriver;
+	    driver = chromeDriver;
+
+	    driver.manage().window().maximize();
 	}
 
 	// ==================== Teardown ====================
