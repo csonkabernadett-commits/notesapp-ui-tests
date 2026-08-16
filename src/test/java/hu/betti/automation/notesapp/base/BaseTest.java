@@ -28,31 +28,20 @@ public class BaseTest {
 
 	    ChromeOptions options = new ChromeOptions();
 
-	    options.addArguments("--incognito");
+	    // CI környezetben headless mód
+	    options.addArguments("--headless=new");
 
-	    if (System.getProperty("CI") != null) {
-	        options.addArguments("--headless=new");
-	        options.addArguments("--window-size=1920,1080");
-	        options.addArguments("--force-device-scale-factor=1");
-	    }
+	    // Full HD felbontás
+	    options.addArguments("--window-size=1920,1080");
+
+	    // CI környezethez
+	    options.addArguments("--disable-gpu");
+	    options.addArguments("--no-sandbox");
+	    options.addArguments("--disable-dev-shm-usage");
 
 	    ChromeDriver chromeDriver = new ChromeDriver(options);
 
-	    if (System.getProperty("CI") != null) {
-	        chromeDriver.executeCdpCommand(
-	            "Emulation.setDeviceMetricsOverride",
-	            Map.of(
-	                "width", 1920,
-	                "height", 1080,
-	                "deviceScaleFactor", 1,
-	                "mobile", false
-	            )
-	        );
-	    } else {
-	        chromeDriver.manage().window().maximize();
-	    }
-	    
-	    
+	    // Reklámblokkolás
 	    chromeDriver.executeCdpCommand("Network.enable", Map.of());
 
 	    chromeDriver.executeCdpCommand(
