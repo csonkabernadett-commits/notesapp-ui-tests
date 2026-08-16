@@ -30,9 +30,51 @@ public class PrivacyTest {
 
 	@AfterEach
 	void tearDown() {
-		if (driver != null) {
-			driver.quit();
-		}
+
+	    if (driver != null) {
+
+	        try {
+	            if (driver instanceof org.openqa.selenium.TakesScreenshot) {
+
+	                java.io.File screenshot =
+	                        ((org.openqa.selenium.TakesScreenshot) driver)
+	                                .getScreenshotAs(
+	                                        org.openqa.selenium.OutputType.FILE);
+
+	                java.nio.file.Path screenshotPath =
+	                        java.nio.file.Paths.get(
+	                                "failure-screenshots",
+	                                "PrivacyTest.png");
+
+	                java.nio.file.Files.createDirectories(
+	                        screenshotPath.getParent());
+
+	                java.nio.file.Files.copy(
+	                        screenshot.toPath(),
+	                        screenshotPath,
+	                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+	            }
+
+	            String html = driver.getPageSource();
+
+	            java.nio.file.Path htmlPath =
+	                    java.nio.file.Paths.get(
+	                            "failure-screenshots",
+	                            "PrivacyTest.html");
+
+	            java.nio.file.Files.writeString(
+	                    htmlPath,
+	                    html,
+	                    java.nio.charset.StandardCharsets.UTF_8);
+
+	        } catch (Exception e) {
+	            System.out.println(
+	                    "Could not save PrivacyTest diagnostics: "
+	                            + e.getMessage());
+	        }
+
+	        driver.quit();
+	    }
 	}
 
 	// @RepeatedTest(10)
