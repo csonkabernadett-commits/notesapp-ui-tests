@@ -11,30 +11,26 @@ import hu.betti.automation.notesapp.utils.RandomDataGenerator;
 
 public class RegisterTest extends BaseTest {
 
-    @Test
-    void successfulRegistration() {
+	@Test
+	void successfulRegistration() {
 
-        // Arrange
-    	
-    	String email = RandomDataGenerator.generateEmail();
-    	String name = RandomDataGenerator.generateName();
-    	String password = RandomDataGenerator.generatePassword();
-    	
-    	
-    	HomePage homePage = new HomePage(driver);
-    	homePage.open();
-    	RegisterPage registerPage = homePage.clickCreateAccount();
-    	
-    	
-        // Act
-    	
-    	registerPage.register(email, name, password);
+		// ==================== Arrange ====================
 
-        // Assert
-        
-    	assertEquals(
-    			"User account created successfully",
-    	        registerPage.getSuccessMessage());
-    }
+		String email = RandomDataGenerator.generateEmail();
+		String name = RandomDataGenerator.generateName();
+		String password = RandomDataGenerator.generatePassword();
 
+		HomePage homePage = new HomePage(driver);
+		homePage.open();
+
+		RegisterPage registerPage = homePage.clickCreateAccount();
+
+		// ==================== Act ====================
+
+		registerPage.register(email, name, password);
+
+		// ==================== Assert ====================
+
+		assertEquals("User account created successfully", registerPage.getSuccessMessage());
+	}
 }

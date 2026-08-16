@@ -1,7 +1,6 @@
 package hu.betti.automation.notesapp.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,37 +13,32 @@ import hu.betti.automation.notesapp.utils.RandomDataGenerator;
 
 public class LogoutTest extends BaseTest {
 
-    @Test
-    void logout() {
+	@Test
+	void logout() {
 
-        // Arrange
+		// ==================== Arrange ====================
 
-        String email = RandomDataGenerator.generateEmail();
-        String name = RandomDataGenerator.generateName();
-        String password = RandomDataGenerator.generatePassword();
+		String email = RandomDataGenerator.generateEmail();
+		String name = RandomDataGenerator.generateName();
+		String password = RandomDataGenerator.generatePassword();
 
-        HomePage homePage = new HomePage(driver);
-        homePage.open();
+		HomePage homePage = new HomePage(driver);
+		homePage.open();
 
-        RegisterPage registerPage = homePage.clickCreateAccount();
-        registerPage.register(email, name, password);
+		RegisterPage registerPage = homePage.clickCreateAccount();
 
-        LoginPage loginPage = registerPage.clickLogin();
+		registerPage.register(email, name, password);
 
-        loginPage.enterEmail(email);
-        loginPage.enterPassword(password);
+		LoginPage loginPage = registerPage.clickLogin();
 
-        NotesPage notesPage = loginPage.clickLogin();
+		NotesPage notesPage = loginPage.login(email, password);
 
-        // Act
+		// ==================== Act ====================
 
-        notesPage.logout();
+		notesPage.logout();
 
-        // Assert
+		// ==================== Assert ====================
 
-        assertEquals(
-                "Welcome to Notes App",
-                homePage.getWelcomeTitle()
-        );
-    }
+		assertEquals("Welcome to Notes App", homePage.getWelcomeTitle());
+	}
 }

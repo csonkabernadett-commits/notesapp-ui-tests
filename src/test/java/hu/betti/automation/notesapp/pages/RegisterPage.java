@@ -7,7 +7,8 @@ import hu.betti.automation.notesapp.base.BasePage;
 
 public class RegisterPage extends BasePage {
 
-	// Locators
+	// ==================== Fields ====================
+
 	private final By emailField = By.cssSelector("[data-testid='register-email']");
 
 	private final By nameField = By.cssSelector("[data-testid='register-name']");
@@ -22,10 +23,13 @@ public class RegisterPage extends BasePage {
 
 	private final By successMessage = By.cssSelector(".alert-success b");
 
-	// Constructor
+	// ==================== Constructor ====================
+
 	public RegisterPage(WebDriver driver) {
 		super(driver);
 	}
+
+	// ==================== Interaction ====================
 
 	public void enterEmail(String email) {
 		type(emailField, email);
@@ -55,13 +59,16 @@ public class RegisterPage extends BasePage {
 		clickRegister();
 	}
 
+	// ==================== Verification ====================
+
 	public String getSuccessMessage() {
 		return getText(successMessage);
 	}
+
+	// ==================== Navigation ====================
 
 	public LoginPage clickLogin() {
 		click(loginLink);
 		return new LoginPage(driver);
 	}
-
 }

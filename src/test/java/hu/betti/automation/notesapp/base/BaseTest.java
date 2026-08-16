@@ -1,58 +1,55 @@
 package hu.betti.automation.notesapp.base;
 
+import java.util.List;
+import java.util.Map;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
-import java.util.List;
-import java.util.Map;
 
 public class BaseTest {
 
+	// ==================== Fields ====================
+
+	// Shared WebDriver used by all tests.
 	protected WebDriver driver;
 
-	   @BeforeEach
-	    void setUp() {
+	// ==================== Setup ====================
 
-	        WebDriverManager.chromedriver().setup();
+	@BeforeEach
+	void setUp() {
 
-	        ChromeOptions options = new ChromeOptions();
+		// Set up ChromeDriver automatically.
+		WebDriverManager.chromedriver().setup();
 
-	        options.addArguments("--start-maximized");
-	        options.addArguments("--disable-blink-features=AutomationControlled");
+		ChromeOptions options = new ChromeOptions();
 
-	        ChromeDriver chromeDriver = new ChromeDriver(options);
+		// Start Chrome maximized.
+		options.addArguments("--start-maximized");
 
-	        // Ads blokkolása
-	        chromeDriver.executeCdpCommand(
-	                "Network.enable",
-	                Map.of()
-	        );
+		ChromeDriver chromeDriver = new ChromeDriver(options);
 
-	        chromeDriver.executeCdpCommand(
-	                "Network.setBlockedURLs",
-	                Map.of(
-	                        "urls",
-	                        List.of(
-	                                "*doubleclick.net/*",
-	                                "*googlesyndication.com/*",
-	                                "*googleadservices.com/*",
-	                                "*adservice.google.com/*"
-	                        )
-	                )
-	        );
+		// Enable network control through Chrome DevTools Protocol.
+		chromeDriver.executeCdpCommand("Network.enable", Map.of());
 
-	        driver = chromeDriver;
-	    }
+		// Block selected advertising network requests.
+		chromeDriver.executeCdpCommand("Network.setBlockedURLs", Map.of("urls", List.of("*doubleclick.net/*",
+				"*googlesyndication.com/*", "*googleadservices.com/*", "*adservice.google.com/*")));
 
+		driver = chromeDriver;
+	}
+
+	// ==================== Teardown ====================
 
 	@AfterEach
 	void tearDown() {
+
 		if (driver != null) {
 			driver.quit();
 		}
 	}
 }
- 

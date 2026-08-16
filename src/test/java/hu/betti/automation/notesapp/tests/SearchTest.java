@@ -15,63 +15,59 @@ import hu.betti.automation.notesapp.utils.RandomDataGenerator;
 
 public class SearchTest extends BaseTest {
 
-    @Test
-    void searchNote() {
+	@Test
+	void searchNote() {
 
-        // Arrange
+		// ==================== Arrange ====================
 
-        String email = RandomDataGenerator.generateEmail();
-        String name = RandomDataGenerator.generateName();
-        String password = RandomDataGenerator.generatePassword();
+		String email = RandomDataGenerator.generateEmail();
+		String name = RandomDataGenerator.generateName();
+		String password = RandomDataGenerator.generatePassword();
 
-        HomePage homePage = new HomePage(driver);
-        homePage.open();
+		HomePage homePage = new HomePage(driver);
+		homePage.open();
 
-        RegisterPage registerPage = homePage.clickCreateAccount();
-        registerPage.register(email, name, password);
+		RegisterPage registerPage = homePage.clickCreateAccount();
 
-        LoginPage loginPage = registerPage.clickLogin();
+		registerPage.register(email, name, password);
 
-        loginPage.enterEmail(email);
-        loginPage.enterPassword(password);
+		LoginPage loginPage = registerPage.clickLogin();
 
-        NotesPage notesPage = loginPage.clickLogin();
+		NotesPage notesPage = loginPage.login(email, password);
 
-        String searchableTitle = "UNIQUE_SEARCH_TEST_12345";
+		String searchableTitle = "UNIQUE_SEARCH_TEST_12345";
 
-        // Create 3 notes
+		// Create three notes.
+		for (int i = 1; i <= 3; i++) {
 
-        for (int i = 1; i <= 3; i++) {
+			AddNoteModal addNoteModal = notesPage.clickAddNote();
 
-            AddNoteModal addNoteModal = notesPage.clickAddNote();
+			String title;
 
-            String title;
+			if (i == 2) {
+				title = searchableTitle;
+			} else {
+				title = "Other note " + i;
+			}
 
-            if (i == 2) {
-                title = searchableTitle;
-            } else {
-                title = "Other note " + i;
-            }
+			addNoteModal.selectCategory("Work");
+			addNoteModal.enterTitle(title);
+			addNoteModal.enterDescription("Search test note " + i);
+			addNoteModal.clickCreate();
+		}
 
-            addNoteModal.selectCategory("Work");
-            addNoteModal.enterTitle(title);
-            addNoteModal.enterDescription("Search test note " + i);
-            addNoteModal.clickCreate();
-        }
+		// Wait until all three notes are displayed.
+		notesPage.waitForNoteCount(3);
 
-        // Wait for all 3 notes
+		// ==================== Act ====================
 
-        notesPage.waitForNoteCount(3);
+		notesPage.search(searchableTitle);
 
-        // Act
+		// ==================== Assert ====================
 
-        notesPage.search(searchableTitle);
+		notesPage.waitForNoteCount(1);
 
-        // Assert
-
-        notesPage.waitForNoteCount(1);
-
-        assertEquals(1, notesPage.getNoteCount());
-        assertTrue(notesPage.isNoteDisplayed(searchableTitle));
-    }
+		assertEquals(1, notesPage.getNoteCount());
+		assertTrue(notesPage.isNoteDisplayed(searchableTitle));
+	}
 }

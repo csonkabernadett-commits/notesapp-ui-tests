@@ -1,165 +1,158 @@
 package hu.betti.automation.notesapp.pages;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-
-import hu.betti.automation.notesapp.base.BasePage;
-import java.util.List;
 import org.openqa.selenium.WebElement;
 
+import hu.betti.automation.notesapp.base.BasePage;
+
 public class NotesPage extends BasePage {
-	
-	  // Locators
-    private final By addNoteButton =
-            By.cssSelector("[data-testid='add-new-note']");
 
-    private final By profileButton =
-            By.cssSelector("[data-testid='profile']");
+	// ==================== Fields ====================
 
-    private final By logoutButton =
-            By.cssSelector("[data-testid='logout']");
-    
-    private final By searchField =
-            By.cssSelector("[data-testid='search-input']");
+	private final By addNoteButton = By.cssSelector("[data-testid='add-new-note']");
 
-    private final By searchButton =
-            By.cssSelector("[data-testid='search-btn']");
-    
-    private final By noteCards =
-            By.cssSelector("[data-testid='note-card']");
-          
-    private final By deleteConfirmButton =
-            By.cssSelector("[data-testid='note-delete-confirm']");
+	private final By profileButton = By.cssSelector("[data-testid='profile']");
 
-    private final By deleteCancelButton =
-            By.cssSelector("[data-testid='note-delete-cancel-2']");
-    
-    private final By progressInfo =
-            By.cssSelector("[data-testid='progress-info']");
-    
-       
-    // Constructor
+	private final By logoutButton = By.cssSelector("[data-testid='logout']");
+
+	private final By searchField = By.cssSelector("[data-testid='search-input']");
+
+	private final By searchButton = By.cssSelector("[data-testid='search-btn']");
+
+	private final By noteCards = By.cssSelector("[data-testid='note-card']");
+
+	private final By deleteConfirmButton = By.cssSelector("[data-testid='note-delete-confirm']");
+
+	private final By deleteCancelButton = By.cssSelector("[data-testid='note-delete-cancel-2']");
+
+	private final By progressInfo = By.cssSelector("[data-testid='progress-info']");
+
+	// ==================== Constructor ====================
+
 	public NotesPage(WebDriver driver) {
 		super(driver);
 	}
-	
+
+	// ==================== Verification ====================
+
 	public boolean isLoaded() {
-	     return waitVisible(addNoteButton).isDisplayed();
-	    }
+		return waitVisible(addNoteButton).isDisplayed();
+	}
+
+	public boolean isNoteDisplayed(String title) {
+
+		By noteTitle = By.xpath("//div[@data-testid='note-card-title' and normalize-space()='" + title + "']");
+
+		return waitVisible(noteTitle).isDisplayed();
+	}
+
+	public int getNoteCount() {
+		return driver.findElements(noteCards).size();
+	}
+
+	public boolean areNotesDisplayed(List<String> expectedTitles) {
+
+		List<WebElement> cards = driver.findElements(noteCards);
+
+		for (String title : expectedTitles) {
+
+			boolean found = false;
+
+			for (WebElement card : cards) {
+
+				String cardTitle = card.findElement(By.cssSelector("[data-testid='note-card-title']")).getText();
+
+				if (cardTitle.equals(title)) {
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	public String getProgressInfo() {
+		return getText(progressInfo);
+	}
+
+	// ==================== Navigation ====================
 
 	public ProfilePage clickProfile() {
-	      click(profileButton);
-	      return new ProfilePage(driver);
-	    }
+		click(profileButton);
+		return new ProfilePage(driver);
+	}
 
-	 public HomePage clickLogout() {
-	      click(logoutButton);
-	      return new HomePage(driver);
-	    }
-	 
-	 public void search(String text) {
-		    type(searchField, text);
-		    click(searchButton);
-		}
-	 
-	 public AddNoteModal clickAddNote() {
-		    click(addNoteButton);
-		    return new AddNoteModal(driver);
-		}
-	 
-	 public boolean isNoteDisplayed(String title) {
-		    By noteTitle = By.xpath(
-		        "//div[@data-testid='note-card-title' and normalize-space()='" + title + "']"
-		    );
-		    return waitVisible(noteTitle).isDisplayed();
-		}
-	 
-	 public int getNoteCount() {
-		    return driver.findElements(noteCards).size();
-		}
-	 
-	 public boolean areNotesDisplayed(List<String> expectedTitles) {
+	public HomePage clickLogout() {
+		click(logoutButton);
+		return new HomePage(driver);
+	}
 
-		    List<WebElement> cards = driver.findElements(noteCards);
+	public void logout() {
+		click(logoutButton);
+	}
 
-		    for (String title : expectedTitles) {
+	// ==================== Notes ====================
 
-		        boolean found = false;
+	public AddNoteModal clickAddNote() {
+		click(addNoteButton);
+		return new AddNoteModal(driver);
+	}
 
-		        for (WebElement card : cards) {
+	public void waitForNoteCount(int expectedCount) {
+		waitForNumberOfElements(noteCards, expectedCount);
+	}
 
-		            String cardTitle = card.findElement(
-		                    By.cssSelector("[data-testid='note-card-title']")
-		            ).getText();
+	// ==================== Search ====================
 
-		            if (cardTitle.equals(title)) {
-		                found = true;
-		                break;
-		            }
-		        }
+	public void search(String text) {
+		type(searchField, text);
+		click(searchButton);
+	}
 
-		        if (!found) {
-		            return false;
-		        }
-		    }
+	// ==================== Filtering ====================
 
-		    return true;
-		}
-	 
-	 
-	 public void waitForNoteCount(int expectedCount) {
-		    waitForNumberOfElements(noteCards, expectedCount);
-		}
-	 
-	 public void deleteNote(String title) {
+	public void selectCategory(String category) {
 
-		    By deleteButton = By.xpath(
-		        "//div[@data-testid='note-card']"
-		        + "[.//div[@data-testid='note-card-title' "
-		        + "and normalize-space()='" + title + "']"
-		        + "]"
-		        + "//button[@data-testid='note-delete']"
-		    );
+		By categoryButton = By.cssSelector("[data-testid='category-" + category.toLowerCase() + "']");
 
-		    click(deleteButton);
-		}
-	 
-	 public EditNoteModal editNote(String title) {
+		click(categoryButton);
+	}
 
-		    By editButton = By.xpath(
-		        "//div[@data-testid='note-card']"
-		        + "[.//div[@data-testid='note-card-title' "
-		        + "and normalize-space()='" + title + "']"
-		        + "]"
-		        + "//button[@data-testid='note-edit']"
-		    );
+	// ==================== Deletion ====================
 
-		    click(editButton);
+	public void deleteNote(String title) {
 
-		    return new EditNoteModal(driver);
-		}
-	 
-	 public void confirmDelete() {
-		    click(deleteConfirmButton);
-		}
-	 
-	 public void cancelDelete() {
-		    click(deleteCancelButton);
-		}
-	 
-	 public void logout() {
-		    click(logoutButton);
-		}
-	 
-	 public void selectCategory(String category) {
-		    By categoryButton = By.cssSelector(
-		        "[data-testid='category-" + category.toLowerCase() + "']"
-		    );
+		By deleteButton = By.xpath("//div[@data-testid='note-card']" + "[.//div[@data-testid='note-card-title' "
+				+ "and normalize-space()='" + title + "']" + "]" + "//button[@data-testid='note-delete']");
 
-		    click(categoryButton);
-		}
+		click(deleteButton);
+	}
 
-		public String getProgressInfo() {
-		    return getText(progressInfo);
-		}
+	public void confirmDelete() {
+		click(deleteConfirmButton);
+	}
+
+	public void cancelDelete() {
+		click(deleteCancelButton);
+	}
+
+	// ==================== Editing ====================
+
+	public EditNoteModal editNote(String title) {
+
+		By editButton = By.xpath("//div[@data-testid='note-card']" + "[.//div[@data-testid='note-card-title' "
+				+ "and normalize-space()='" + title + "']" + "]" + "//button[@data-testid='note-edit']");
+
+		click(editButton);
+
+		return new EditNoteModal(driver);
+	}
 }

@@ -19,52 +19,48 @@ import hu.betti.automation.notesapp.utils.RandomDataGenerator;
 
 public class CreateNotesFromCsvTest extends BaseTest {
 
-    @Test
-    void createNotesFromCsv() {
+	@Test
+	void createNotesFromCsv() {
 
-        // Arrange
+		// ==================== Arrange ====================
 
-        List<Note> notes = CsvReader.readNotes(
-                "src/test/resources/notes.csv");
+		List<Note> notes = CsvReader.readNotes("src/test/resources/notes.csv");
 
-        String email = RandomDataGenerator.generateEmail();
-        String name = RandomDataGenerator.generateName();
-        String password = RandomDataGenerator.generatePassword();
+		String email = RandomDataGenerator.generateEmail();
+		String name = RandomDataGenerator.generateName();
+		String password = RandomDataGenerator.generatePassword();
 
-        HomePage homePage = new HomePage(driver);
-        homePage.open();
+		HomePage homePage = new HomePage(driver);
+		homePage.open();
 
-        RegisterPage registerPage = homePage.clickCreateAccount();
-        registerPage.register(email, name, password);
+		RegisterPage registerPage = homePage.clickCreateAccount();
 
-        assertTrue(registerPage.getSuccessMessage()
-                .contains("User account created successfully"));
+		registerPage.register(email, name, password);
 
-        LoginPage loginPage = registerPage.clickLogin();
+		assertTrue(registerPage.getSuccessMessage().contains("User account created successfully"));
 
-        loginPage.enterEmail(email);
-        loginPage.enterPassword(password);
+		LoginPage loginPage = registerPage.clickLogin();
 
-        NotesPage notesPage = loginPage.clickLogin();
+		NotesPage notesPage = loginPage.login(email, password);
 
-        // Act
+		// ==================== Act ====================
 
-        for (Note note : notes) {
+		for (Note note : notes) {
 
-            AddNoteModal addNoteModal = notesPage.clickAddNote();
+			AddNoteModal addNoteModal = notesPage.clickAddNote();
 
-            addNoteModal.selectCategory(note.getCategory());
-            addNoteModal.enterTitle(note.getTitle());
-            addNoteModal.enterDescription(note.getDescription());
-            addNoteModal.clickCreate();
-        }
+			addNoteModal.selectCategory(note.getCategory());
+			addNoteModal.enterTitle(note.getTitle());
+			addNoteModal.enterDescription(note.getDescription());
+			addNoteModal.clickCreate();
+		}
 
-        // Assert
+		// ==================== Assert ====================
 
-        assertTrue(notesPage.isLoaded());
+		assertTrue(notesPage.isLoaded());
 
-        notesPage.waitForNoteCount(notes.size());
+		notesPage.waitForNoteCount(notes.size());
 
-        assertEquals(notes.size(), notesPage.getNoteCount());
-    }
+		assertEquals(notes.size(), notesPage.getNoteCount());
+	}
 }

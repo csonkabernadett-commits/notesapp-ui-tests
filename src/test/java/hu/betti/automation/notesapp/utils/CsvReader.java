@@ -10,32 +10,31 @@ import hu.betti.automation.notesapp.models.Note;
 
 public class CsvReader {
 
-    public static List<Note> readNotes(String filePath) {
+	// ==================== Methods ====================
 
-        List<Note> notes = new ArrayList<>();
+	public static List<Note> readNotes(String filePath) {
 
-        try {
-            List<String> lines = Files.readAllLines(Path.of(filePath));
+		List<Note> notes = new ArrayList<>();
 
-            // Első sor a fejléc
-            for (int i = 1; i < lines.size(); i++) {
+		try {
+			List<String> lines = Files.readAllLines(Path.of(filePath));
 
-                String[] data = lines.get(i).split(",");
+			// Skip the header row.
+			for (int i = 1; i < lines.size(); i++) {
 
-                String title = data[0].trim();
-                String description = data[1].trim();
-                String category = data[2].trim();
+				String[] data = lines.get(i).split(",");
 
-                notes.add(new Note(title, description, category));
-            }
+				String title = data[0].trim();
+				String description = data[1].trim();
+				String category = data[2].trim();
 
-        } catch (IOException e) {
-            throw new RuntimeException("CSV file could not be read: " + filePath, e);
-        }
+				notes.add(new Note(title, description, category));
+			}
 
-        return notes;
-    }
+		} catch (IOException e) {
+			throw new RuntimeException("CSV file could not be read: " + filePath, e);
+		}
+
+		return notes;
+	}
 }
-	
-	
-

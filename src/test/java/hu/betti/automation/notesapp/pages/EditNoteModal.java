@@ -8,68 +8,60 @@ import hu.betti.automation.notesapp.base.BasePage;
 
 public class EditNoteModal extends BasePage {
 
-    // Locators
+	// ==================== Fields ====================
 
-    private final By categorySelect =
-            By.cssSelector("[data-testid='note-category']");
+	private final By categorySelect = By.cssSelector("[data-testid='note-category']");
 
-    private final By completedCheckbox =
-            By.cssSelector("[data-testid='note-completed']");
+	private final By completedCheckbox = By.cssSelector("[data-testid='note-completed']");
 
-    private final By titleField =
-            By.cssSelector("[data-testid='note-title']");
+	private final By titleField = By.cssSelector("[data-testid='note-title']");
 
-    private final By descriptionField =
-            By.cssSelector("[data-testid='note-description']");
+	private final By descriptionField = By.cssSelector("[data-testid='note-description']");
 
-    private final By saveButton =
-            By.cssSelector("[data-testid='note-submit']");
+	private final By saveButton = By.cssSelector("[data-testid='note-submit']");
 
-    private final By cancelButton =
-            By.cssSelector("[data-testid='note-cancel']");
+	private final By cancelButton = By.cssSelector("[data-testid='note-cancel']");
 
-    private final By closeButton =
-            By.cssSelector("[aria-label='Close']");
+	private final By closeButton = By.cssSelector("[aria-label='Close']");
 
+	// ==================== Constructor ====================
 
-    // Constructor
+	public EditNoteModal(WebDriver driver) {
+		super(driver);
+	}
 
-    public EditNoteModal(WebDriver driver) {
-        super(driver);
-    }
+	// ==================== Interaction ====================
 
+	public void selectCategory(String category) {
+		Select select = new Select(waitVisible(categorySelect));
+		select.selectByVisibleText(category);
+	}
 
-    // Interaction
+	public void enterTitle(String title) {
+		clear(titleField);
+		type(titleField, title);
+	}
 
-    public void selectCategory(String category) {
-        Select select = new Select(waitVisible(categorySelect));
-        select.selectByVisibleText(category);
-    }
+	public void enterDescription(String description) {
+		clear(descriptionField);
+		type(descriptionField, description);
+	}
 
-    public void enterTitle(String title) {
-        clear(titleField);
-        type(titleField, title);
-    }
+	public void markCompleted() {
+		if (!waitVisible(completedCheckbox).isSelected()) {
+			click(completedCheckbox);
+		}
+	}
 
-    public void enterDescription(String description) {
-        clear(descriptionField);
-        type(descriptionField, description);
-    }
+	public void clickSave() {
+		click(saveButton);
+	}
 
-    public void markCompleted() {
-        if (!waitVisible(completedCheckbox).isSelected()) {
-            click(completedCheckbox);
-        }
-    }
-    public void clickSave() {
-            click(saveButton);
-    }
+	public void clickCancel() {
+		click(cancelButton);
+	}
 
-    public void clickCancel() {
-        click(cancelButton);
-    }
-
-    public void close() {
-        click(closeButton);
-    }
+	public void close() {
+		click(closeButton);
+	}
 }

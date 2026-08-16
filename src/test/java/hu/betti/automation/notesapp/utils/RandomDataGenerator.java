@@ -4,21 +4,21 @@ import java.util.UUID;
 
 public class RandomDataGenerator {
 
-    public static String generateEmail() {
-        return "test_" + UUID.randomUUID() + "@example.com";
-    }
+	// ==================== Methods ====================
 
-    public static String generateName() {
-        return "Test User";
-    }
+	public static String generateEmail() {
+		return "test_" + UUID.randomUUID() + "@example.com";
+	}
 
-    public static String generatePassword() {
-        return "Password123!";
-    }
-    
-    public static String generateNoteTitle() {
-        return "Automated note " 
-                + UUID.randomUUID().toString().substring(0, 8);
-    }
+	public static String generateName() {
+		return "Test User";
+	}
 
+	public static String generatePassword() {
+		return "Password123!";
+	}
+
+	public static String generateNoteTitle() {
+		return "Automated note " + UUID.randomUUID().toString().substring(0, 8);
+	}
 }

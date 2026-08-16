@@ -15,54 +15,50 @@ import hu.betti.automation.notesapp.utils.RandomDataGenerator;
 
 public class EditTest extends BaseTest {
 
-    @Test
-    void editNote() {
+	@Test
+	void editNote() {
 
-        // Arrange
+		// ==================== Arrange ====================
 
-        String email = RandomDataGenerator.generateEmail();
-        String name = RandomDataGenerator.generateName();
-        String password = RandomDataGenerator.generatePassword();
-        
-        
+		String email = RandomDataGenerator.generateEmail();
+		String name = RandomDataGenerator.generateName();
+		String password = RandomDataGenerator.generatePassword();
 
-        HomePage homePage = new HomePage(driver);
-        homePage.open();
+		HomePage homePage = new HomePage(driver);
+		homePage.open();
 
-        RegisterPage registerPage = homePage.clickCreateAccount();
-        registerPage.register(email, name, password);
+		RegisterPage registerPage = homePage.clickCreateAccount();
 
-        LoginPage loginPage = registerPage.clickLogin();
+		registerPage.register(email, name, password);
 
-        loginPage.enterEmail(email);
-        loginPage.enterPassword(password);
+		LoginPage loginPage = registerPage.clickLogin();
 
-        NotesPage notesPage = loginPage.clickLogin();
+		NotesPage notesPage = loginPage.login(email, password);
 
-        AddNoteModal addNoteModal = notesPage.clickAddNote();
+		AddNoteModal addNoteModal = notesPage.clickAddNote();
 
-        String title = "Note to edit";
+		String title = "Note to edit";
 
-        addNoteModal.selectCategory("Work");
-        addNoteModal.enterTitle(title);
-        addNoteModal.enterDescription("Original description");
-        addNoteModal.clickCreate();
+		addNoteModal.selectCategory("Work");
+		addNoteModal.enterTitle(title);
+		addNoteModal.enterDescription("Original description");
+		addNoteModal.clickCreate();
 
-        notesPage.waitForNoteCount(1);
+		notesPage.waitForNoteCount(1);
 
-        assertTrue(notesPage.isNoteDisplayed(title));
+		// ==================== Act ====================
 
-        // Act
+		EditNoteModal editNoteModal = notesPage.editNote(title);
 
-        EditNoteModal editNoteModal = notesPage.editNote(title);
-        
-        String editedTitle = "Edited note";
-        String editedDescription = "Edited description";
+		String editedTitle = "Edited note";
+		String editedDescription = "Edited description";
 
-        editNoteModal.enterTitle(editedTitle);
-        editNoteModal.enterDescription(editedDescription);
-        editNoteModal.clickSave();
-        
-        assertTrue(notesPage.isNoteDisplayed(editedTitle));
-    }
+		editNoteModal.enterTitle(editedTitle);
+		editNoteModal.enterDescription(editedDescription);
+		editNoteModal.clickSave();
+
+		// ==================== Assert ====================
+
+		assertTrue(notesPage.isNoteDisplayed(editedTitle));
+	}
 }

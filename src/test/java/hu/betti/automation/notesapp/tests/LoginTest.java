@@ -12,28 +12,31 @@ import hu.betti.automation.notesapp.pages.RegisterPage;
 import hu.betti.automation.notesapp.utils.RandomDataGenerator;
 
 public class LoginTest extends BaseTest {
-	
+
 	@Test
 	void successfulLogin() {
-		// Arrange - Tesztadatok létrehozása
+
+		// ==================== Arrange ====================
+
 		String email = RandomDataGenerator.generateEmail();
 		String name = RandomDataGenerator.generateName();
 		String password = RandomDataGenerator.generatePassword();
-		
+
 		HomePage homePage = new HomePage(driver);
 		homePage.open();
-		
-		// Act - 
-		// 1. Regisztráció
+
 		RegisterPage registerPage = homePage.clickCreateAccount();
+
 		registerPage.register(email, name, password);
-		
-		// 2. Bejelentkezés
+
+		// ==================== Act ====================
+
 		LoginPage loginPage = registerPage.clickLogin();
-		
+
 		NotesPage notesPage = loginPage.login(email, password);
-		
-		// Assert
+
+		// ==================== Assert ====================
+
 		assertTrue(notesPage.isLoaded());
 	}
 }

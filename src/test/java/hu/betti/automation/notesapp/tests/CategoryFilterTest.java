@@ -1,5 +1,6 @@
 package hu.betti.automation.notesapp.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -19,79 +20,82 @@ import hu.betti.automation.notesapp.utils.RandomDataGenerator;
 
 public class CategoryFilterTest extends BaseTest {
 
-    @Test
-    void filterNotesByCategory() {
+	@Test
+	void filterNotesByCategory() {
 
-        // Arrange
+		// ==================== Arrange ====================
 
-        String email = RandomDataGenerator.generateEmail();
-        String name = RandomDataGenerator.generateName();
-        String password = RandomDataGenerator.generatePassword();
+		String email = RandomDataGenerator.generateEmail();
+		String name = RandomDataGenerator.generateName();
+		String password = RandomDataGenerator.generatePassword();
 
-        HomePage homePage = new HomePage(driver);
-        homePage.open();
+		HomePage homePage = new HomePage(driver);
+		homePage.open();
 
-        RegisterPage registerPage = homePage.clickCreateAccount();
-        registerPage.register(email, name, password);
+		RegisterPage registerPage = homePage.clickCreateAccount();
 
-        assertTrue(registerPage.getSuccessMessage()
-                .contains("User account created successfully"));
+		registerPage.register(email, name, password);
 
-        LoginPage loginPage = registerPage.clickLogin();
+		assertEquals("User account created successfully", registerPage.getSuccessMessage());
 
-        loginPage.enterEmail(email);
-        loginPage.enterPassword(password);
+		LoginPage loginPage = registerPage.clickLogin();
 
-        NotesPage notesPage = loginPage.clickLogin();
+		NotesPage notesPage = loginPage.login(email, password);
 
-        // Create notes in different categories
+		List<Note> notes = CsvReader.readNotes("src/test/resources/notes.csv");
 
-        List<Note> notes = CsvReader.readNotes(
-                "src/test/resources/notes.csv");
+		List<String> workTitles = new ArrayList<>();
+		List<String> homeTitles = new ArrayList<>();
+		List<String> personalTitles = new ArrayList<>();
 
-        for (Note note : notes) {
+		// Create notes in different categories.
+		for (Note note : notes) {
 
-            AddNoteModal addNoteModal = notesPage.clickAddNote();
+			AddNoteModal addNoteModal = notesPage.clickAddNote();
 
-            addNoteModal.selectCategory(note.getCategory());
-            addNoteModal.enterTitle(note.getTitle());
-            addNoteModal.enterDescription(note.getDescription());
-            addNoteModal.clickCreate();
-        }
-        
-        List<String> workTitles = new ArrayList<>();
-        List<String> homeTitles = new ArrayList<>();
-        List<String> personalTitles = new ArrayList<>();
+			addNoteModal.selectCategory(note.getCategory());
+			addNoteModal.enterTitle(note.getTitle());
+			addNoteModal.enterDescription(note.getDescription());
+			addNoteModal.clickCreate();
+		}
 
-        for (Note note : notes) {
+		// Group note titles by category.
+		for (Note note : notes) {
 
-            switch (note.getCategory()) {
-                case "Work":
-                    workTitles.add(note.getTitle());
-                    break;
+			switch (note.getCategory()) {
 
-                case "Home":
-                    homeTitles.add(note.getTitle());
-                    break;
+			case "Work":
+				workTitles.add(note.getTitle());
+				break;
 
-                case "Personal":
-                    personalTitles.add(note.getTitle());
-                    break;
-            }
-        }
-        
-     // Act & Assert
+			case "Home":
+				homeTitles.add(note.getTitle());
+				break;
 
-        notesPage.selectCategory("Work");
-        assertTrue(notesPage.getProgressInfo().contains("work category"));
-        assertTrue(notesPage.areNotesDisplayed(workTitles));
+			case "Personal":
+				personalTitles.add(note.getTitle());
+				break;
+			}
+		}
 
-        notesPage.selectCategory("Home");
-        assertTrue(notesPage.getProgressInfo().contains("home category"));
-        assertTrue(notesPage.areNotesDisplayed(homeTitles));
+		// ==================== Assert ====================
 
-        notesPage.selectCategory("Personal");
-        assertTrue(notesPage.getProgressInfo().contains("personal category"));
-        assertTrue(notesPage.areNotesDisplayed(personalTitles));
-    }
+		// Verify Work category.
+		notesPage.selectCategory("Work");
+		assertTrue(notesPage.getProgressInfo().contains("work category"));
+		assertEquals(workTitles.size(), notesPage.getNoteCount());
+		assertTrue(notesPage.areNotesDisplayed(workTitles));
+
+		// Verify Home category.
+		notesPage.selectCategory("Home");
+		assertTrue(notesPage.getProgressInfo().contains("home category"));
+		assertEquals(homeTitles.size(), notesPage.getNoteCount());
+		assertTrue(notesPage.areNotesDisplayed(homeTitles));
+
+		// Verify Personal category.
+		notesPage.selectCategory("Personal");
+		assertTrue(notesPage.getProgressInfo().contains("personal category"));
+		assertEquals(personalTitles.size(), notesPage.getNoteCount());
+		assertTrue(notesPage.areNotesDisplayed(personalTitles));
+	}
 }

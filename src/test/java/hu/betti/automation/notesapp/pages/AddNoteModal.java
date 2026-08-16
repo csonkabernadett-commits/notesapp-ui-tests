@@ -8,64 +8,59 @@ import hu.betti.automation.notesapp.base.BasePage;
 
 public class AddNoteModal extends BasePage {
 
-    // Locators
-    private final By categorySelect =
-            By.cssSelector("[data-testid='note-category']");
+	// ==================== Fields ====================
 
-    private final By completedCheckbox =
-            By.cssSelector("[data-testid='note-completed']");
+	private final By categorySelect = By.cssSelector("[data-testid='note-category']");
 
-    private final By titleField =
-            By.cssSelector("[data-testid='note-title']");
+	private final By completedCheckbox = By.cssSelector("[data-testid='note-completed']");
 
-    private final By descriptionField =
-            By.cssSelector("[data-testid='note-description']");
+	private final By titleField = By.cssSelector("[data-testid='note-title']");
 
-    private final By createButton =
-            By.cssSelector("[data-testid='note-submit']");
+	private final By descriptionField = By.cssSelector("[data-testid='note-description']");
 
-    private final By cancelButton =
-            By.cssSelector("[data-testid='note-cancel']");
+	private final By createButton = By.cssSelector("[data-testid='note-submit']");
 
-    private final By closeButton =
-            By.cssSelector("[aria-label='Close']");
+	private final By cancelButton = By.cssSelector("[data-testid='note-cancel']");
 
+	private final By closeButton = By.cssSelector("[aria-label='Close']");
 
-    // Constructor
-    public AddNoteModal(WebDriver driver) {
-        super(driver);
-    }
+	// ==================== Constructor ====================
 
-    public void selectCategory(String category) {
-        Select select = new Select(waitVisible(categorySelect));
-        select.selectByVisibleText(category);
-    }
+	public AddNoteModal(WebDriver driver) {
+		super(driver);
+	}
 
-    public void enterTitle(String title) {
-        type(titleField, title);
-    }
+	// ==================== Interaction ====================
 
-    public void enterDescription(String description) {
-        type(descriptionField, description);
-    }
+	public void selectCategory(String category) {
+		Select select = new Select(waitVisible(categorySelect));
+		select.selectByVisibleText(category);
+	}
 
-    public void markCompleted() {
-        if (!waitVisible(completedCheckbox).isSelected()) {
-            click(completedCheckbox);
-        }
-    }
+	public void enterTitle(String title) {
+		type(titleField, title);
+	}
 
-    public void clickCreate() {
-        click(createButton);
-    }
+	public void enterDescription(String description) {
+		type(descriptionField, description);
+	}
 
-    public void clickCancel() {
-        click(cancelButton);
-    }
+	// Select the checkbox only if it is not already selected.
+	public void markCompleted() {
+		if (!waitVisible(completedCheckbox).isSelected()) {
+			click(completedCheckbox);
+		}
+	}
 
-    public void close() {
-        click(closeButton);
-    }
-}	
-	
+	public void clickCreate() {
+		click(createButton);
+	}
 
+	public void clickCancel() {
+		click(cancelButton);
+	}
+
+	public void close() {
+		click(closeButton);
+	}
+}

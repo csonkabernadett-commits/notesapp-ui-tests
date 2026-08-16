@@ -13,57 +13,54 @@ import hu.betti.automation.notesapp.pages.NotesPage;
 import hu.betti.automation.notesapp.pages.RegisterPage;
 import hu.betti.automation.notesapp.utils.RandomDataGenerator;
 
-public class CreateManyNotesTest extends BaseTest{
+public class CreateManyNotesTest extends BaseTest {
 
-	
 	@Test
 	void createManyNotes() {
 
-	    // Arrange
-		
+		// ==================== Arrange ====================
+
 		int numberOfNotes = 5;
 
-	    String email = RandomDataGenerator.generateEmail();
-	    String name = RandomDataGenerator.generateName();
-	    String password = RandomDataGenerator.generatePassword();
+		String email = RandomDataGenerator.generateEmail();
+		String name = RandomDataGenerator.generateName();
+		String password = RandomDataGenerator.generatePassword();
 
-	    HomePage homePage = new HomePage(driver);
-	    homePage.open();
+		HomePage homePage = new HomePage(driver);
+		homePage.open();
 
-	    RegisterPage registerPage = homePage.clickCreateAccount();
-	    registerPage.register(email, name, password);
+		RegisterPage registerPage = homePage.clickCreateAccount();
 
-	    assertTrue(registerPage.getSuccessMessage()
-	            .contains("User account created successfully"));
+		registerPage.register(email, name, password);
 
-	    LoginPage loginPage = registerPage.clickLogin();
+		assertTrue(registerPage.getSuccessMessage().contains("User account created successfully"));
 
-	    loginPage.enterEmail(email);
-	    loginPage.enterPassword(password);
+		LoginPage loginPage = registerPage.clickLogin();
 
-	    NotesPage notesPage = loginPage.clickLogin();
+		NotesPage notesPage = loginPage.login(email, password);
 
-	    // Act
+		// ==================== Act ====================
 
-	    for (int i = 1; i <= numberOfNotes; i++) {
+		for (int i = 1; i <= numberOfNotes; i++) {
 
-	        AddNoteModal addNoteModal = notesPage.clickAddNote();
+			AddNoteModal addNoteModal = notesPage.clickAddNote();
 
-	        String title = RandomDataGenerator.generateNoteTitle();
-	        String description = "Test note number " + i;
+			String title = RandomDataGenerator.generateNoteTitle();
 
-	        addNoteModal.selectCategory("Work");
-	        addNoteModal.enterTitle(title);
-	        addNoteModal.enterDescription(description);
-	        addNoteModal.clickCreate();
-	    }
+			String description = "Test note number " + i;
 
-	    // Assert
+			addNoteModal.selectCategory("Work");
+			addNoteModal.enterTitle(title);
+			addNoteModal.enterDescription(description);
+			addNoteModal.clickCreate();
+		}
 
-	    assertTrue(notesPage.isLoaded());
+		// ==================== Assert ====================
 
-	    notesPage.waitForNoteCount(numberOfNotes);
+		assertTrue(notesPage.isLoaded());
 
-	    assertEquals(numberOfNotes, notesPage.getNoteCount());
+		notesPage.waitForNoteCount(numberOfNotes);
+
+		assertEquals(numberOfNotes, notesPage.getNoteCount());
 	}
 }

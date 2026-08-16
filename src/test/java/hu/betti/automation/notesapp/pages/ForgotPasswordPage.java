@@ -8,7 +8,6 @@ public class ForgotPasswordPage extends BasePage {
 
 	public ForgotPasswordPage(WebDriver driver) {
 		super(driver);
-		// TODO Auto-generated constructor stub
 	}
 
 }

@@ -18,96 +18,89 @@ public class DeleteTest extends BaseTest {
 	@Test
 	void deleteNote() {
 
-	    // Arrange
+		// ==================== Arrange ====================
 
-	    String email = RandomDataGenerator.generateEmail();
-	    String name = RandomDataGenerator.generateName();
-	    String password = RandomDataGenerator.generatePassword();
+		String email = RandomDataGenerator.generateEmail();
+		String name = RandomDataGenerator.generateName();
+		String password = RandomDataGenerator.generatePassword();
 
-	    HomePage homePage = new HomePage(driver);
-	    homePage.open();
+		HomePage homePage = new HomePage(driver);
+		homePage.open();
 
-	    RegisterPage registerPage = homePage.clickCreateAccount();
-	    registerPage.register(email, name, password);
+		RegisterPage registerPage = homePage.clickCreateAccount();
 
-	    LoginPage loginPage = registerPage.clickLogin();
+		registerPage.register(email, name, password);
 
-	    loginPage.enterEmail(email);
-	    loginPage.enterPassword(password);
+		LoginPage loginPage = registerPage.clickLogin();
 
-	    NotesPage notesPage = loginPage.clickLogin();
+		NotesPage notesPage = loginPage.login(email, password);
 
-	    AddNoteModal addNoteModal = notesPage.clickAddNote();
+		AddNoteModal addNoteModal = notesPage.clickAddNote();
 
-	    String title = "Note to delete";
+		String title = "Note to delete";
 
-	    addNoteModal.selectCategory("Work");
-	    addNoteModal.enterTitle(title);
-	    addNoteModal.enterDescription("This note will be deleted.");
-	    addNoteModal.clickCreate();
+		addNoteModal.selectCategory("Work");
+		addNoteModal.enterTitle(title);
+		addNoteModal.enterDescription("This note will be deleted.");
+		addNoteModal.clickCreate();
 
-	    notesPage.waitForNoteCount(1);
+		notesPage.waitForNoteCount(1);
 
-	    assertTrue(notesPage.isNoteDisplayed(title));
+		assertTrue(notesPage.isNoteDisplayed(title));
 
-	    // Act
+		// ==================== Act ====================
 
-	    notesPage.deleteNote(title);
-	    notesPage.confirmDelete();
+		notesPage.deleteNote(title);
+		notesPage.confirmDelete();
 
-	    // Assert
+		// ==================== Assert ====================
 
-	    notesPage.waitForNoteCount(0);
+		notesPage.waitForNoteCount(0);
 
-	    assertEquals(0, notesPage.getNoteCount());
+		assertEquals(0, notesPage.getNoteCount());
 	}
-	
+
 	@Test
 	void cancelDeleteNote() {
 
-	    // Arrange
+		// ==================== Arrange ====================
 
-	    String email = RandomDataGenerator.generateEmail();
-	    String name = RandomDataGenerator.generateName();
-	    String password = RandomDataGenerator.generatePassword();
+		String email = RandomDataGenerator.generateEmail();
+		String name = RandomDataGenerator.generateName();
+		String password = RandomDataGenerator.generatePassword();
 
-	    HomePage homePage = new HomePage(driver);
-	    homePage.open();
+		HomePage homePage = new HomePage(driver);
+		homePage.open();
 
-	    RegisterPage registerPage = homePage.clickCreateAccount();
-	    registerPage.register(email, name, password);
+		RegisterPage registerPage = homePage.clickCreateAccount();
 
-	    LoginPage loginPage = registerPage.clickLogin();
+		registerPage.register(email, name, password);
 
-	    loginPage.enterEmail(email);
-	    loginPage.enterPassword(password);
+		LoginPage loginPage = registerPage.clickLogin();
 
-	    NotesPage notesPage = loginPage.clickLogin();
+		NotesPage notesPage = loginPage.login(email, password);
 
-	    AddNoteModal addNoteModal = notesPage.clickAddNote();
+		AddNoteModal addNoteModal = notesPage.clickAddNote();
 
-	    String title = "Note to keep";
+		String title = "Note to keep";
 
-	    addNoteModal.selectCategory("Work");
-	    addNoteModal.enterTitle(title);
-	    addNoteModal.enterDescription("This note should not be deleted.");
-	    addNoteModal.clickCreate();
+		addNoteModal.selectCategory("Work");
+		addNoteModal.enterTitle(title);
+		addNoteModal.enterDescription("This note should not be deleted.");
+		addNoteModal.clickCreate();
 
-	    notesPage.waitForNoteCount(1);
+		notesPage.waitForNoteCount(1);
 
-	    // Act
+		// ==================== Act ====================
 
-	    notesPage.deleteNote(title);
-	    notesPage.cancelDelete();
+		notesPage.deleteNote(title);
+		notesPage.cancelDelete();
 
-	    // Assert
+		// ==================== Assert ====================
 
-	    notesPage.waitForNoteCount(1);
+		notesPage.waitForNoteCount(1);
 
-	    assertEquals(1, notesPage.getNoteCount());
-	    assertTrue(notesPage.isNoteDisplayed(title));
+		assertEquals(1, notesPage.getNoteCount());
+		assertTrue(notesPage.isNoteDisplayed(title));
 	}
-	
-	
-	
 }

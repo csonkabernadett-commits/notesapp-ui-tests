@@ -14,50 +14,44 @@ import hu.betti.automation.notesapp.utils.RandomDataGenerator;
 
 public class AddNoteTest extends BaseTest {
 
-	
 	@Test
-    void createNewNote() {
-		
-		
-		// Arrange
+	void createNewNote() {
 
-        String email = RandomDataGenerator.generateEmail();
-        String name = RandomDataGenerator.generateName();
-        String password = RandomDataGenerator.generatePassword();
-        String title = RandomDataGenerator.generateNoteTitle();
-        String description = "This note was created by Selenium.";
-        
-        HomePage homePage = new HomePage(driver);
-        homePage.open();
+		// ==================== Arrange ====================
 
-        RegisterPage registerPage = homePage.clickCreateAccount();
-        registerPage.register(email, name, password);
+		String email = RandomDataGenerator.generateEmail();
+		String name = RandomDataGenerator.generateName();
+		String password = RandomDataGenerator.generatePassword();
+		String title = RandomDataGenerator.generateNoteTitle();
+		String description = "This note was created by Selenium.";
 
-        assertTrue(registerPage.getSuccessMessage()
-                .contains("User account created successfully"));
+		HomePage homePage = new HomePage(driver);
+		homePage.open();
 
-        // Act
+		RegisterPage registerPage = homePage.clickCreateAccount();
 
-        LoginPage loginPage = registerPage.clickLogin();
+		registerPage.register(email, name, password);
 
-        loginPage.enterEmail(email);
-        loginPage.enterPassword(password);
+		assertTrue(registerPage.getSuccessMessage().contains("User account created successfully"));
 
-        NotesPage notesPage = loginPage.clickLogin();
+		// ==================== Act ====================
 
-        AddNoteModal addNoteModal = notesPage.clickAddNote();
+		LoginPage loginPage = registerPage.clickLogin();
 
-        addNoteModal.selectCategory("Work");
-        addNoteModal.enterTitle(title);
-        addNoteModal.enterDescription(description);
+		NotesPage notesPage = loginPage.login(email, password);
 
-        addNoteModal.clickCreate();
-        
-        
-        // Assert
+		AddNoteModal addNoteModal = notesPage.clickAddNote();
 
-        assertTrue(notesPage.isLoaded());
-        assertTrue(notesPage.isNoteDisplayed(title));
-    }
-}	
+		addNoteModal.selectCategory("Work");
+		addNoteModal.enterTitle(title);
+		addNoteModal.enterDescription(description);
 
+		addNoteModal.clickCreate();
+
+		// ==================== Assert ====================
+
+		assertTrue(notesPage.isLoaded());
+		assertTrue(notesPage.isNoteDisplayed(title));
+
+	}
+}
