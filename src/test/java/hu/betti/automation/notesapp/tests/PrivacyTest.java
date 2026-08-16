@@ -6,6 +6,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -43,6 +44,52 @@ public class PrivacyTest {
 
 		driver = chromeDriver;
 	}
+	
+	JavascriptExecutor js = (JavascriptExecutor) driver;
+
+	Object result = js.executeScript("""
+	    const result = [];
+
+	    function inspect(root, level) {
+	        const elements = root.querySelectorAll('*');
+
+	        for (const el of elements) {
+	            if (el.id === 'ft-floating-toolbar') {
+	                result.push(
+	                    'FOUND toolbar: ' +
+	                    el.tagName +
+	                    ' id=' +
+	                    el.id +
+	                    ' level=' +
+	                    level
+	                );
+	            }
+
+	            if (el.shadowRoot) {
+	                result.push(
+	                    'SHADOW ROOT: ' +
+	                    el.tagName +
+	                    ' id=' +
+	                    (el.id || '')
+	                );
+
+	                inspect(el.shadowRoot, level + 1);
+	            }
+	        }
+	    }
+
+	    result.push(
+	        'DIRECT: ' +
+	        (document.querySelector('#ft-floating-toolbar') !== null)
+	    );
+
+	    inspect(document, 0);
+
+	    return result;
+	""");
+
+	System.out.println("=== PRIVACY DOM DIAGNOSTICS ===");
+	System.out.println(result);
 
 	@AfterEach
 	void tearDown() {
