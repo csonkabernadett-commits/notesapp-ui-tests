@@ -22,27 +22,26 @@ public class PrivacyTest {
 		WebDriverManager.chromedriver().setup();
 
 		ChromeOptions options = new ChromeOptions();
-		options.addArguments("--start-maximized");
+		//options.addArguments("--start-maximized");
 
 		// No ad blocking: this test uses the normal page environment.
 		driver = new ChromeDriver(options);
 
-		/*
-		 * CI környezetben headless mód 
-		 * options.addArguments("--headless=new");
-		 * 
-		 * // Full HD felbontás 
-		 * options.addArguments("--window-size=1920,1080");
-		 * 
-		 * // CI környezethez 
-		 * options.addArguments("--disable-gpu");
-		 * options.addArguments("--no-sandbox");
-		 * options.addArguments("--disable-dev-shm-usage");
-		 */
+		//CI környezetben headless mód 
+		 options.addArguments("--headless=new");
+		  
+		 // Full HD felbontás 
+		 options.addArguments("--window-size=1920,1080");
+		 
+		 // CI környezethez 
+		 options.addArguments("--disable-gpu");
+		 options.addArguments("--no-sandbox");
+		 options.addArguments("--disable-dev-shm-usage");
+		 
 
 		ChromeDriver chromeDriver = new ChromeDriver(options);
 
-		//driver = chromeDriver;
+		driver = chromeDriver;
 	}
 
 	@AfterEach
