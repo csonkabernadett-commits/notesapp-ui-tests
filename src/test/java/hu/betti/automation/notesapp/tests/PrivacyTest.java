@@ -53,6 +53,7 @@ public class PrivacyTest {
         HomePage homePage = new HomePage(driver);
 
         homePage.open();
+        homePage.scrollToPrivacy();
 
         // Privacy DOM diagnosztika
         JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -60,41 +61,21 @@ public class PrivacyTest {
         Object result = js.executeScript("""
             const result = [];
 
-            function inspect(root, level) {
-                const elements = root.querySelectorAll('*');
+            result.push('BODY DIV COUNT: ' + document.querySelectorAll('body > div').length);
 
-                for (const el of elements) {
-
-                    if (el.id === 'ft-floating-toolbar') {
-                        result.push(
-                            'FOUND toolbar: ' +
-                            el.tagName +
-                            ' id=' +
-                            el.id +
-                            ' level=' +
-                            level
-                        );
-                    }
-
-                    if (el.shadowRoot) {
-                        result.push(
-                            'SHADOW ROOT: ' +
-                            el.tagName +
-                            ' id=' +
-                            (el.id || '')
-                        );
-
-                        inspect(el.shadowRoot, level + 1);
-                    }
-                }
-            }
+            document.querySelectorAll('body > div').forEach((el, index) => {
+                result.push(
+                    'DIV ' + index +
+                    ' id=' + (el.id || '') +
+                    ' class=' + (el.className || '') +
+                    ' shadowRoot=' + (el.shadowRoot !== null)
+                );
+            });
 
             result.push(
-                'DIRECT: ' +
+                'DIRECT TOOLBAR: ' +
                 (document.querySelector('#ft-floating-toolbar') !== null)
             );
-
-            inspect(document, 0);
 
             return result;
         """);
@@ -102,7 +83,7 @@ public class PrivacyTest {
         System.out.println("=== PRIVACY DOM DIAGNOSTICS ===");
         System.out.println(result);
 
-        homePage.scrollToPrivacy();
+    
         homePage.clickPrivacyIcon();
 
         assertTrue(homePage.isPrivacySettingsDisplayed());
