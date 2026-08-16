@@ -34,6 +34,8 @@ public class PrivacyTest {
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        
+        ChromeDriver chromeDriver = new ChromeDriver(options);
 
         // Nincs reklámblokkolás a PrivacyTest-ben.
         driver = new ChromeDriver(options);
@@ -79,6 +81,29 @@ public class PrivacyTest {
 
             return result;
         """);
+        
+        Object privacySearch = js.executeScript("""
+        	    const result = [];
+
+        	    const html = document.documentElement.outerHTML;
+
+        	    const terms = [
+        	        'ft-floating-toolbar',
+        	        'privacy',
+        	        'Privacy',
+        	        'legal',
+        	        'cookie'
+        	    ];
+
+        	    for (const term of terms) {
+        	        result.push(term + ': ' + html.includes(term));
+        	    }
+
+        	    return result;
+        	""");
+
+        	System.out.println("=== PRIVACY TEXT SEARCH ===");
+        	System.out.println(privacySearch);
 
         System.out.println("=== PRIVACY DOM DIAGNOSTICS ===");
         System.out.println(result);
