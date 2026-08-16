@@ -29,7 +29,8 @@ public class BaseTest {
 		ChromeOptions options = new ChromeOptions();
 
 		// Start Chrome maximized.
-		options.addArguments("--start-maximized");
+		options.addArguments("--window-size=1920,1080");
+
 
 		ChromeDriver chromeDriver = new ChromeDriver(options);
 
