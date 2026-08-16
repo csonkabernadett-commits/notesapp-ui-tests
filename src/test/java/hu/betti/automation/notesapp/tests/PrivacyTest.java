@@ -2,7 +2,6 @@ package hu.betti.automation.notesapp.tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.RepeatedTest;
@@ -20,77 +19,40 @@ public class PrivacyTest {
 	@BeforeEach
 	void setUp() {
 
-		 WebDriverManager.chromedriver().setup();
+		WebDriverManager.chromedriver().setup();
 
-		    ChromeOptions options = new ChromeOptions();
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("--start-maximized");
 
-		    // CI környezetben headless mód
-		    options.addArguments("--headless=new");
+		// No ad blocking: this test uses the normal page environment.
+		driver = new ChromeDriver(options);
 
-		    // Full HD felbontás
-		    options.addArguments("--window-size=1920,1080");
+		/*
+		 * CI környezetben headless mód 
+		 * options.addArguments("--headless=new");
+		 * 
+		 * // Full HD felbontás 
+		 * options.addArguments("--window-size=1920,1080");
+		 * 
+		 * // CI környezethez 
+		 * options.addArguments("--disable-gpu");
+		 * options.addArguments("--no-sandbox");
+		 * options.addArguments("--disable-dev-shm-usage");
+		 */
 
-		    // CI környezethez
-		    options.addArguments("--disable-gpu");
-		    options.addArguments("--no-sandbox");
-		    options.addArguments("--disable-dev-shm-usage");
+		ChromeDriver chromeDriver = new ChromeDriver(options);
 
-		    ChromeDriver chromeDriver = new ChromeDriver(options);
-
-		   driver = chromeDriver;
-		}
-
+		//driver = chromeDriver;
+	}
 
 	@AfterEach
 	void tearDown() {
-
-	    if (driver != null) {
-
-	        try {
-	            if (driver instanceof org.openqa.selenium.TakesScreenshot) {
-
-	                java.io.File screenshot =
-	                        ((org.openqa.selenium.TakesScreenshot) driver)
-	                                .getScreenshotAs(
-	                                        org.openqa.selenium.OutputType.FILE);
-
-	                java.nio.file.Path screenshotPath =
-	                        java.nio.file.Paths.get(
-	                                "failure-screenshots",
-	                                "PrivacyTest.png");
-
-	                java.nio.file.Files.createDirectories(
-	                        screenshotPath.getParent());
-
-	                java.nio.file.Files.copy(
-	                        screenshot.toPath(),
-	                        screenshotPath,
-	                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-	            }
-
-	            String html = driver.getPageSource();
-
-	            java.nio.file.Path htmlPath =
-	                    java.nio.file.Paths.get(
-	                            "failure-screenshots",
-	                            "PrivacyTest.html");
-
-	            java.nio.file.Files.writeString(
-	                    htmlPath,
-	                    html,
-	                    java.nio.charset.StandardCharsets.UTF_8);
-
-	        } catch (Exception e) {
-	            System.out.println(
-	                    "Could not save PrivacyTest diagnostics: "
-	                            + e.getMessage());
-	        }
-
-	        driver.quit();
-	    }
+		if (driver != null) {
+			driver.quit();
+		}
 	}
 
-	// @RepeatedTest(10)
+	//@RepeatedTest(10)
 	@Test
 	void privacySettingsTest() {
 
@@ -102,5 +64,4 @@ public class PrivacyTest {
 
 		assertTrue(homePage.isPrivacySettingsDisplayed());
 	}
-
 }

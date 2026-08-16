@@ -24,37 +24,36 @@ public class BaseTest {
 	@BeforeEach
 	void setUp() {
 
-	    WebDriverManager.chromedriver().setup();
+		WebDriverManager.chromedriver().setup();
 
-	    ChromeOptions options = new ChromeOptions();
+		ChromeOptions options = new ChromeOptions();
 
-	    // CI környezetben headless mód
-	    options.addArguments("--headless=new");
+		// Start Chrome maximized.
+		options.addArguments("--start-maximized");
 
-	    // Full HD felbontás
-	    options.addArguments("--window-size=1920,1080");
+		/*
+		 * CI környezetben headless mód 
+		 * options.addArguments("--headless=new");
+		 * 
+		 * // Full HD felbontás 
+		 * options.addArguments("--window-size=1920,1080");
+		 * 
+		 * // CI környezethez 
+		 * options.addArguments("--disable-gpu");
+		 * options.addArguments("--no-sandbox");
+		 * options.addArguments("--disable-dev-shm-usage");
+		 */
 
-	    // CI környezethez
-	    options.addArguments("--disable-gpu");
-	    options.addArguments("--no-sandbox");
-	    options.addArguments("--disable-dev-shm-usage");
+		ChromeDriver chromeDriver = new ChromeDriver(options);
 
-	    ChromeDriver chromeDriver = new ChromeDriver(options);
+		// Enable network control through Chrome DevTools Protocol.
+		chromeDriver.executeCdpCommand("Network.enable", Map.of());
 
-	    // Reklámblokkolás
-	    chromeDriver.executeCdpCommand("Network.enable", Map.of());
+		// Block selected advertising network requests.
+		chromeDriver.executeCdpCommand("Network.setBlockedURLs", Map.of("urls", List.of("*doubleclick.net/*",
+				"*googlesyndication.com/*", "*googleadservices.com/*", "*adservice.google.com/*")));
 
-	    chromeDriver.executeCdpCommand(
-	        "Network.setBlockedURLs",
-	        Map.of("urls", List.of(
-	            "*doubleclick.net/*",
-	            "*googlesyndication.com/*",
-	            "*googleadservices.com/*",
-	            "*adservice.google.com/*"
-	        ))
-	    );
-
-	    driver = chromeDriver;
+		//driver = chromeDriver;
 	}
 
 	// ==================== Teardown ====================
