@@ -53,6 +53,41 @@ public class PrivacyTest {
         HomePage homePage = new HomePage(driver);
 
         homePage.scrollToPrivacy();
+        
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        Object iframeInfo = js.executeScript("""
+            const result = [];
+
+            document.querySelectorAll('iframe').forEach((iframe, index) => {
+                result.push(
+                    'IFRAME ' + index +
+                    ' src=' + (iframe.src || '') +
+                    ' title=' + (iframe.title || '') +
+                    ' id=' + (iframe.id || '') +
+                    ' name=' + (iframe.name || '')
+                );
+            });
+
+            result.push('IFRAME COUNT: ' + document.querySelectorAll('iframe').length);
+
+            document.querySelectorAll('*').forEach((el, index) => {
+                if (el.shadowRoot) {
+                    result.push(
+                        'SHADOW HOST ' + index +
+                        ' tag=' + el.tagName +
+                        ' id=' + (el.id || '') +
+                        ' class=' + (el.className || '')
+                    );
+                }
+            });
+
+            return result;
+        """);
+
+        System.out.println("=== IFRAME / SHADOW DOM DIAGNOSTICS ===");
+        System.out.println(iframeInfo);
+        
         homePage.clickPrivacyIcon();
 
         assertTrue(homePage.isPrivacySettingsDisplayed());
