@@ -96,6 +96,20 @@ public class PrivacyTest {
 
         System.out.println("=== CMP IFRAMES AFTER 15 SEC ===");
         System.out.println(cmpInfo);
+        
+        Object privacyState = js.executeScript("""
+        	    return {
+        	        language: navigator.language,
+        	        languages: navigator.languages,
+        	        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        	        cookieEnabled: navigator.cookieEnabled,
+        	        doNotTrack: navigator.doNotTrack,
+        	        url: window.location.href
+        	    };
+        	""");
+
+        	System.out.println("=== BROWSER PRIVACY ENVIRONMENT ===");
+        	System.out.println(privacyState);
 
         /*
         homePage.scrollToPrivacy();
