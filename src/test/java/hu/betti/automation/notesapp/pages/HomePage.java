@@ -20,11 +20,9 @@ public class HomePage extends BasePage {
 
 	private final By welcomeTitle = By.tagName("h1");
 
-	private final By privacyIcon = By.cssSelector(
-			"button[aria-label='Toggle privacy and legal settings display']");
+	private final By privacyIcon = By.cssSelector("button[aria-label='Toggle privacy and legal settings display']");
 
 	private final By privacySettingsButton = By.cssSelector(".ft-reg-message-button");
-
 
 	// ==================== Constructor ====================
 
@@ -32,13 +30,11 @@ public class HomePage extends BasePage {
 		super(driver);
 	}
 
-
 	// ==================== Navigation ====================
 
 	public void open() {
 		driver.get(URL);
 	}
-
 
 	// ==================== Interaction ====================
 
@@ -51,7 +47,6 @@ public class HomePage extends BasePage {
 		click(createAccountButton);
 		return new RegisterPage(driver);
 	}
-
 
 	// ==================== Privacy ====================
 
@@ -68,8 +63,7 @@ public class HomePage extends BasePage {
 
 		for (int i = 0; i < 3; i++) {
 
-			((JavascriptExecutor) driver).executeScript(
-					"window.scrollTo(0, document.documentElement.scrollHeight);");
+			((JavascriptExecutor) driver).executeScript("window.scrollTo(0, document.documentElement.scrollHeight);");
 
 			try {
 				Thread.sleep(1000);
@@ -93,14 +87,12 @@ public class HomePage extends BasePage {
 		}
 	}
 
-
 	// ==================== Verification Privacy ====================
 
 	public boolean isPrivacySettingsDisplayed() {
 
 		return waitForPrivacyElement(privacySettingsButton, 10).isDisplayed();
 	}
-
 
 	// ==================== Verification General ====================
 

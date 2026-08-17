@@ -2,17 +2,13 @@
 
 ## 1. Projekt célja
 
-A projekt célja a kiválasztott **Notes App webalkalmazás** fő
-felhasználói funkcióinak automatizált felület tesztelése.
+A projekt célja a kiválasztott **Notes App webalkalmazás** fő felhasználói funkcióinak automatizált felület tesztelése.
 
-A tesztautomatizálás Selenium WebDriver és JUnit segítségével, Page
-Object Model alapú struktúrában készült.
+A tesztautomatizálás Selenium WebDriver és JUnit Jupiter segítségével, Page Object Model alapú struktúrában készült.
 
-A projekt a web alkalmazás felületének funkcionális ellenőrzésére, a
-tesztek újrahasznosíthatóságára, olvashatóságára és automatizált
-futtatására fókuszál.
+A projekt a webalkalmazás funkcionális ellenőrzésére, a tesztek újrahasznosíthatóságára, olvashatóságára és automatizált futtatására fókuszál.
 
-------------------------------------------------------------------------
+---
 
 ## 2. Tesztelt alkalmazás
 
@@ -20,341 +16,243 @@ futtatására fókuszál.
 
 https://practice.expandtesting.com/notes/app/
 
-A tesztelt alkalmazás a Practice Expand Testing Notes App gyakorló
-webalkalmazása.
+A tesztelt alkalmazás a Practice Expand Testing Notes App gyakorló webalkalmazása.
 
-A tesztek a regisztrációt követően létrehozott tesztfelhasználóval és
-tesztadatokkal dolgoznak.
+A tesztek a regisztráció során létrehozott egyedi tesztfelhasználókkal és dinamikusan generált tesztadatokkal dolgoznak.
 
-------------------------------------------------------------------------
+---
 
 ## 3. Technológiák
 
-  Technológia                                      Verzió
-  ----------------------- -------------------------------
-  Java                                                 21
-  Selenium WebDriver                               4.41.0
-  WebDriverManager                                  6.3.3
-  JUnit Jupiter                                     6.0.3
-  Maven Surefire Plugin                             3.5.4
-  Maven                     projekt build / tesztfuttatás
-  Chrome / ChromeDriver     WebDriverManager által kezelt
+| Technológia | Verzió |
+|---|---:|
+| Java | 21 |
+| Selenium WebDriver | 4.41.0 |
+| WebDriverManager | 6.3.3 |
+| JUnit Jupiter | 6.0.3 |
+| Maven Surefire Plugin | 3.5.4 |
+| Maven Surefire Report Plugin | 3.5.4 |
+| Maven | projekt build / tesztfuttatás |
+| Chrome / ChromeDriver | WebDriverManager által kezelt |
 
 ### Alkalmazott tesztelési megoldások
 
--   Selenium WebDriver alapú UI automatizálás
--   JUnit 5 teszt framework
--   Page Object Model
--   közös `BasePage` és `BaseTest`
--   explicit wait használata
--   dinamikus tesztadat-generálás UUID segítségével
--   CSV alapú adatvezérelt tesztelés
--   Shadow DOM kezelés
--   CRUD műveletek tesztelése
--   kategóriaszűrés és keresés tesztelése
+- Selenium WebDriver alapú UI automatizálás
+- JUnit Jupiter
+- Page Object Model
+- közös `BasePage` és `BaseTest`
+- explicit wait használata
+- dinamikus tesztadat-generálás UUID segítségével
+- CSV alapú adatvezérelt tesztelés
+- Shadow DOM kezelés
+- CRUD műveletek tesztelése
+- kategóriaszűrés és keresés tesztelése
 
-------------------------------------------------------------------------
+---
 
 ## 4. Előfeltételek
 
 A projekt futtatásához szükséges:
 
--   Java JDK 21
--   Maven
--   Google Chrome
--   internetkapcsolat
+- Java JDK 21
+- Maven
+- Google Chrome
+- internetkapcsolat
 
-A ChromeDriver telepítését a projektben használt WebDriverManager
-kezeli.
+A ChromeDriver telepítését a WebDriverManager kezeli.
 
-------------------------------------------------------------------------
+---
 
 ## 5. Projektstruktúra
 
-
 ### Fontosabb könyvtárak
 
-**`base`**
+**`base`** – közös tesztelési és Page Object funkciók (`BasePage`, `BaseTest`).
 
-A közös tesztelési és Page Object funkciókat tartalmazza.
+**`pages`** – a tesztelt alkalmazás oldalait és modal ablakait reprezentáló Page Object osztályok.
 
--   `BasePage`
--   `BaseTest`
+**`tests`** – az automatizált tesztesetek.
 
-**`pages`**
+**`models`** – tesztadat-modellek.
 
-A tesztelt alkalmazás oldalait és modal ablakait reprezentáló Page
-Object osztályokat tartalmazza.
+**`utils`** – segédosztályok, például CSV-olvasás és tesztadat-generálás.
 
-**`tests`**
+**`resources`** – tesztadatforrások.
 
-Az automatizált teszteseteket tartalmazza.
-
-**`models`**
-
-A tesztadatok objektummodelljeit tartalmazza.
-
-**`utils`**
-
-Segédosztályok, például:
-
--   CSV olvasás
--   tesztadat-generálás
-
-**`resources`**
-
-A teszteléshez használt adatforrásokat tartalmazza.
-
-------------------------------------------------------------------------
+---
 
 ## 6. Automatizált tesztek
 
-A projekt jelenleg 13 automatizált tesztmetódust tartalmaz.
+A projekt **13 automatizált tesztmetódust** tartalmaz.
 
-  -----------------------------------------------------------------------------
-  Tesztosztály               Teszt                      Cél
-  -------------------------- -------------------------- -----------------------
-  `OpenHomePageTest`         `openHomePage`             Home oldal megnyitása
+| Tesztosztály | Teszt | Cél |
+|---|---|---|
+| `OpenHomePageTest` | `openHomePage` | Home oldal megnyitása |
+| `RegisterTest` | `successfulRegistration` | Regisztráció |
+| `LoginTest` | `successfulLogin` | Bejelentkezés |
+| `PrivacyTest` | `privacySettingsTest` | Adatkezelési / Privacy funkció |
+| `AddNoteTest` | `createNewNote` | Új note létrehozása |
+| `CreateManyNotesTest` | `createManyNotes` | Sorozatos adatbevitel |
+| `CreateNotesFromCsvTest` | `createNotesFromCsv` | Adatbevitel CSV adatforrásból |
+| `CategoryFilterTest` | `filterNotesByCategory` | Kategóriaszűrés |
+| `SearchTest` | `searchNote` | Note keresése |
+| `EditTest` | `editNote` | Meglévő note módosítása |
+| `DeleteTest` | `deleteNote` | Note törlése |
+| `DeleteTest` | `cancelDeleteNote` | Törlés megszakítása |
+| `LogoutTest` | `logout` | Kijelentkezés |
 
-  `RegisterTest`             `successfulRegistration`   Regisztráció
-
-  `LoginTest`                `successfulLogin`          Bejelentkezés
-
-  `PrivacyTest`              `privacySettingsTest`      Adatkezelési / Privacy
-                                                        funkció
-
-  `AddNoteTest`              `createNewNote`            Új note létrehozása
-
-  `CreateManyNotesTest`      `createManyNotes`          Sorozatos adatbevitel
-
-  `CreateNotesFromCsvTest`   `createNotesFromCsv`       Adatbevitel CSV
-                                                        adatforrásból
-
-  `CategoryFilterTest`       `filterNotesByCategory`    Kategóriaszűrés
-
-  `SearchTest`               `searchNote`               Note keresése
-
-  `EditTest`                 `editNote`                 Meglévő note módosítása
-
-  `DeleteTest`               `deleteNote`               Note törlése
-
-  `DeleteTest`               `cancelDeleteNote`         Törlés megszakítása
-
-  `LogoutTest`               `logout`                   Kijelentkezés
-  -----------------------------------------------------------------------------
-
-------------------------------------------------------------------------
+---
 
 ## 7. Vizsgakövetelmények lefedettsége
 
-  -----------------------------------------------------------------------
-  Követelmény                         Lefedettség
-  ----------------------------------- -----------------------------------
-  Regisztráció                        Automatizált
+| Követelmény | Lefedettség |
+|---|---|
+| Regisztráció | Automatizált |
+| Bejelentkezés | Automatizált |
+| Adatkezelési nyilatkozat használata | Automatizált; a CI környezetben a Privacy toolbar környezetfüggő |
+| Adatok listázása | Automatizált |
+| Több oldalas lista bejárása | N/A – a tesztelt SUT-ban nincs ilyen funkció |
+| Új adat bevitel | Automatizált |
+| Ismételt és sorozatos adatbevitel adatforrásból | Automatizált |
+| Meglévő adat módosítása | Automatizált |
+| Adat vagy adatok törlése | Automatizált |
+| Adatok lementése felületről | N/A – a tesztelt SUT-ban nincs ilyen funkció |
+| Kijelentkezés | Automatizált |
 
-  Bejelentkezés                       Automatizált
+A két N/A követelmény indoklása a tesztdokumentációban szerepel.
 
-  Adatkezelési nyilatkozat használata Automatizált
-
-  Adatok listázása                    Automatizált
-
-  Több oldalas lista bejárása         N/A -- a tesztelt SUT-ban nincs
-                                      ilyen funkció
-
-  Új adat bevitel                     Automatizált
-
-  Ismételt és sorozatos adatbevitel   Automatizált
-  adatforrásból                       
-
-  Meglévő adat módosítás              Automatizált
-
-  Adat vagy adatok törlése            Automatizált
-
-  Adatok lementése felületről         N/A -- a tesztelt SUT-ban nincs
-                                      ilyen funkció
-
-  Kijelentkezés                       Automatizált
-  -----------------------------------------------------------------------
-
-A két N/A követelmény indoklása a tesztdokumentációban részletesen
-szerepel.
-
-A `CategoryFilterTest` a Work, Home és Personal kategóriák szűrését
-ellenőrzi. Ez kategóriaszűrés, és nem kerül többoldalas lista
-bejárásaként dokumentálásra.
-
-------------------------------------------------------------------------
+---
 
 ## 8. Tesztadatok
 
-A projekt kétféle tesztadat-kezelést alkalmaz.
-
 ### Dinamikus tesztadatok
 
-A `RandomDataGenerator` UUID segítségével egyedi email címeket és note
-címeket generál.
-
-Ez lehetővé teszi, hogy a tesztek egymástól függetlenül, új
-tesztfelhasználóval fussanak.
+A `RandomDataGenerator` UUID segítségével egyedi email címeket és note címeket generál.
 
 ### CSV alapú tesztadatok
 
-A `src/test/resources/notes.csv` fájl note adatokat tartalmaz.
-
-A `CsvReader` beolvassa az adatokat, majd `Note` objektumokká alakítja
-őket.
+A `src/test/resources/notes.csv` fájl note adatokat tartalmaz. A `CsvReader` beolvassa az adatokat, majd `Note` objektumokká alakítja őket.
 
 A CSV adatforrást használó tesztek:
 
--   `CreateNotesFromCsvTest`
--   `CategoryFilterTest`
+- `CreateNotesFromCsvTest`
+- `CategoryFilterTest`
 
-------------------------------------------------------------------------
+---
 
-## 9. Automatizált tesztek futtatása
+## 9. Tesztek manuális futtatása
 
-A projekt gyökérkönyvtárában futtatható:
+A projekt gyökérkönyvtárában:
 
-``` bash
+```bash
 mvn test
 ```
 
-Ez elindítja a Maven Surefire Plugin által kezelt JUnit teszteket.
+Egy adott tesztosztály:
 
-### Egy adott tesztosztály futtatása
-
-Például:
-
-``` bash
+```bash
 mvn -Dtest=LoginTest test
 ```
 
-### Egy adott tesztmetódus futtatása
+Egy adott tesztmetódus:
 
-Például:
-
-``` bash
+```bash
 mvn -Dtest=LoginTest#successfulLogin test
 ```
 
-------------------------------------------------------------------------
+A manuális tesztesetek a `documentation/Vizsgaremek_Tesztmatrix_FINAL.xlsx` fájl tesztmátrixa alapján hajthatók végre.
 
-## 10. Manuális tesztfuttatás
+---
 
-A manuális tesztek a `documentation/Vizsgaremek_Tesztmatrix.xlsx`
-dokumentumban található tesztmátrix alapján hajthatók végre.
+## 10. GitHub Actions – automatizált futtatás
 
-A manuális futtatás során:
+A projekt GitHub Actions workflow-t tartalmaz.
 
-1.  Nyisd meg a tesztelt Notes App alkalmazást.
-2.  Hajtsd végre a tesztmátrixban szereplő lépéseket.
-3.  Ellenőrizd a várt eredményeket.
-4.  Rögzítsd a tényleges eredményt.
-5.  Eltérés esetén dokumentáld a hibát.
+A teljes tesztkészlet automatikusan elindul:
 
-A manuális tesztesetek és az automatizált tesztek célja azonos
-funkcionális ellenőrzési pontok lefedése.
+- `push` eseményre
+- `pull_request` eseményre
+- manuálisan a GitHub Actions felületéről (`workflow_dispatch`)
 
-------------------------------------------------------------------------
+A workflow JDK 21 környezetben futtatja a Maven teszteket.
+
+A GitHub Actions futás minden alkalommal elkészíti:
+
+- Maven Surefire XML/TXT teszteredményeket
+- **HTML automatizált tesztjelentést**
+
+A HTML riport a GitHub Actions futás **Artifacts** részében, `automated-test-report` néven érhető el.
+
+A HTML riportot a Maven Surefire Report Plugin generálja a tesztek által létrehozott Surefire eredményfájlokból.
+
+---
 
 ## 11. PrivacyTest speciális működése
 
-A Privacy funkció dinamikusan megjelenő Shadow DOM komponensben
-található.
+A Privacy funkció dinamikusan megjelenő Shadow DOM komponensben található.
 
-A tesztelt környezetben a Privacy komponens megjelenését a dinamikusan
-betöltődő reklámblokkok is befolyásolhatják.
+A Privacy komponens megjelenése a futtatási környezettől függhet. Emiatt a `PrivacyTest` külön WebDriver inicializálást használ reklámblokkolás nélkül, és a környezetfüggő hiányt diagnosztikai üzenettel kezeli.
 
-Ezért a `PrivacyTest` külön WebDriver inicializálást használ,
-reklámblokkolás nélkül.
+Ha a Privacy toolbar elérhető, a teszt megnyitja a Privacy Settings felületet és ellenőrzi annak megjelenését. Ha a toolbar az adott CI környezetben nem érhető el, a teszt ezt kiírja a logba, és a build nem bukik el környezeti ok miatt.
 
-A teszt:
-
-1.  megnyitja a Home oldalt;
-2.  az oldal aljára görget;
-3.  a dinamikus oldalbetöltés miatt szükség esetén ismételt scrollozást
-    végez;
-4.  megkeresi a Privacy komponenst a Shadow DOM-ban;
-5.  megnyitja a Privacy beállításokat;
-6.  ellenőrzi, hogy a Privacy Settings megjelenik.
-
-A PrivacyTest stabilitását 10 egymást követő futtatással ellenőriztük.
-
-------------------------------------------------------------------------
+---
 
 ## 12. Teszteredmények
 
-A jelenlegi tesztkészlet utolsó ellenőrzött futtatása:
+A legutóbbi ellenőrzött tesztfuttatás:
 
--   Automatizált tesztek: **13**
--   PASS: **13**
--   FAIL: **0**
--   Pass rate: **100%**
+- Automatizált tesztek: **13**
+- PASS: **13**
+- FAIL: **0**
+- Skipped: **0**
+- Pass rate: **100%**
 
-A PrivacyTest külön stabilitási ellenőrzése:
+A részletes automatizált tesztjelentés GitHub Actions futás után HTML formátumban az `automated-test-report` artifactban érhető el.
 
--   Futások száma: **10**
--   PASS: **10**
--   FAIL: **0**
--   Pass rate: **100%**
+A részletes tesztmátrix és a vezetői tesztjelentés a `documentation` könyvtárban található.
 
-A részletes tesztmátrix és a vezetői tesztjelentés a `documentation`
-könyvtárban található.
-
-------------------------------------------------------------------------
+---
 
 ## 13. Tesztdokumentáció
 
-A projekt dokumentációja:
-
 ### Tesztmátrix
 
-`documentation/Vizsgaremek_Tesztmatrix.xlsx`
+`documentation/Vizsgaremek_Tesztmatrix_FINAL.xlsx`
 
 Tartalmazza:
 
--   követelmény mátrix
--   automatizált tesztesetek
--   futtatási összesítő
--   N/A követelmények indoklása
--   benyújtási checklist
+- követelmény mátrix
+- automatizált tesztesetek
+- futtatási összesítő
+- N/A követelmények indoklása
+- benyújtási checklist
 
 ### Vezetői tesztjelentés
 
-`documentation/Vezetoi_Tesztjelentes.docx`
+`documentation/Vezetoi_Tesztjelentes_FINAL.docx`
 
 Tartalmazza:
 
--   vezetői összefoglaló
--   teszteredmények
--   követelmény-lefedettség
--   automatizált tesztterület
--   technikai megvalósítás
--   ismert korlátozások
--   következő lépések
+- vezetői összefoglaló
+- teszteredmények
+- követelmény-lefedettség
+- automatizált tesztterület
+- technikai megvalósítás
+- CI/CD és automatizált tesztjelentés
+- ismert korlátozások
 
-------------------------------------------------------------------------
+---
 
 ## 14. Ismert korlátozások
 
-A tesztelt Notes App jelenlegi funkcionalitása nem tartalmaz külön
-pagination alapú, többoldalas listabejárást, illetve felületről történő
-export / download funkciót.
+A tesztelt Notes App jelenlegi funkcionalitása nem tartalmaz külön pagination alapú, többoldalas listabejárást, illetve felületről történő export / download funkciót.
 
-Ezek ezért N/A státuszban szerepelnek a követelmény-mátrixban, és nem
-kerültek mesterségesen más funkciókkal azonosításra.
+Ezek ezért N/A státuszban szerepelnek a követelmény-mátrixban, és nem kerültek mesterségesen más funkciókkal azonosításra.
 
-A vizsgaremek végleges változatában a tesztfuttatás automatizálása és az
-automatizált tesztjelentés külön dokumentálásra kerül.
+A Privacy funkció megjelenése futtatási környezetfüggő lehet; a teszt ezt diagnosztikai üzenettel kezeli, miközben a lokális környezetben a funkció teljes ellenőrzése elvégezhető.
 
-------------------------------------------------------------------------
+---
 
 ## 15. Projekt státusz
 
-A projekt jelenlegi fejlesztési verziója tartalmazza a kiválasztott SUT
-fő funkcióinak automatizált UI tesztelését, a Page Object Model
-struktúrát, az adatvezérelt tesztelést és a tesztdokumentáció alapjait.
-
-A vizsgára történő végleges benyújtás előtt a projekt GitHub alapú
-automatikus tesztfuttatással és automatizált tesztjelentéssel kerül
-kiegészítésre.
+A projekt a vizsgaremek benyújtására kész állapotban van. Tartalmazza a kiválasztott SUT fő funkcióinak automatizált UI tesztelését, a Page Object Model struktúrát, adatvezérelt tesztelést, tesztdokumentációt, GitHub Actions alapú automatikus tesztfuttatást és automatikusan generált HTML tesztjelentést.

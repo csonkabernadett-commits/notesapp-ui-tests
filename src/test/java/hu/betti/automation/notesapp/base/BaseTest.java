@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.Dimension;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -29,19 +28,17 @@ public class BaseTest {
 		ChromeOptions options = new ChromeOptions();
 
 		// Start Chrome maximized.
-		//options.addArguments("--start-maximized");
+		// options.addArguments("--start-maximized");
 
-		// CI környezetben headless mód 
+		// Headless mode is required for GitHub Actions
 		options.addArguments("--headless=new");
-		 
-	    // Full HD felbontás 
+
 		options.addArguments("--window-size=1920,1080");
-		 
-		// CI környezethez 
+
 		options.addArguments("--disable-gpu");
 		options.addArguments("--no-sandbox");
 		options.addArguments("--disable-dev-shm-usage");
-		
+
 		ChromeDriver chromeDriver = new ChromeDriver(options);
 
 		// Enable network control through Chrome DevTools Protocol.
@@ -51,7 +48,7 @@ public class BaseTest {
 		chromeDriver.executeCdpCommand("Network.setBlockedURLs", Map.of("urls", List.of("*doubleclick.net/*",
 				"*googlesyndication.com/*", "*googleadservices.com/*", "*adservice.google.com/*")));
 
-		  driver = chromeDriver;
+		driver = chromeDriver;
 	}
 
 	// ==================== Teardown ====================

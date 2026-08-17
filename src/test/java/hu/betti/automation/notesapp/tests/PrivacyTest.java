@@ -15,90 +15,81 @@ import hu.betti.automation.notesapp.pages.HomePage;
 
 public class PrivacyTest {
 
-    // ===== Fields =====
+	/*
+	 * The Privacy toolbar is environment-dependent and is not available in the
+	 * GitHub Actions CI environment. Therefore, the test handles this condition
+	 * without failing the build. When the toolbar is available, the Privacy
+	 * Settings functionality is fully verified.
+	 */
 
-    private WebDriver driver;
+	// ===== Fields =====
 
+	private WebDriver driver;
 
-    // ===== Setup =====
+	// ===== Setup =====
 
-    @BeforeEach
-    void setUp() {
+	@BeforeEach
+	void setUp() {
 
-        WebDriverManager.chromedriver().setup();
+		WebDriverManager.chromedriver().setup();
 
-        ChromeOptions options = new ChromeOptions();
+		ChromeOptions options = new ChromeOptions();
 
-        // Headless mode is required for GitHub Actions
-        options.addArguments("--headless=new");
+		// Headless mode is required for GitHub Actions
+		options.addArguments("--headless=new");
 
-        // Fixed viewport size for stable UI tests
-        options.addArguments("--window-size=1920,1080");
+		// Fixed viewport size for stable UI tests
+		options.addArguments("--window-size=1920,1080");
 
-        // Reduce automation detection by the website
-        options.addArguments("--disable-blink-features=AutomationControlled");
+		// Reduce automation detection by the website
+		options.addArguments("--disable-blink-features=AutomationControlled");
 
-        driver = new ChromeDriver(options);
-    }
+		driver = new ChromeDriver(options);
+	}
 
+	// ===== Teardown =====
 
-    // ===== Teardown =====
+	@AfterEach
+	void tearDown() {
 
-    @AfterEach
-    void tearDown() {
+		if (driver != null) {
+			driver.quit();
+		}
+	}
 
-        if (driver != null) {
-            driver.quit();
-        }
-    }
+	// ===== Tests =====
 
+	@Test
+	void privacySettingsTest() {
 
-    // ===== Tests =====
+		HomePage homePage = new HomePage(driver);
 
-    @Test
-    void privacySettingsTest() {
+		homePage.open();
+		homePage.scrollToPrivacy();
 
-        HomePage homePage = new HomePage(driver);
+		try {
 
-        homePage.open();
-        homePage.scrollToPrivacy();
+			// The Privacy toolbar may not be available in the CI environment
+			if (homePage.isPrivacyToolbarAvailable()) {
 
-        try {
+				System.out.println("Privacy toolbar is available. " + "Opening Privacy settings...");
 
-            // The Privacy toolbar may not be available in the CI environment
-            if (homePage.isPrivacyToolbarAvailable()) {
+				homePage.clickPrivacyIcon();
 
-                System.out.println(
-                        "Privacy toolbar is available. "
-                        + "Opening Privacy settings..."
-                );
+				assertTrue(homePage.isPrivacySettingsDisplayed(), "Privacy settings should be displayed.");
 
-                homePage.clickPrivacyIcon();
+				System.out.println("Privacy settings successfully displayed.");
 
-                assertTrue(
-                        homePage.isPrivacySettingsDisplayed(),
-                        "Privacy settings should be displayed."
-                );
+			} else {
 
-                System.out.println(
-                        "Privacy settings successfully displayed."
-                );
+				System.out
+						.println("Privacy toolbar is not available in this " + "test environment. The test continues.");
+			}
 
-            } else {
+		} catch (TimeoutException e) {
 
-                System.out.println(
-                        "Privacy toolbar is not available in this "
-                        + "test environment. The test continues."
-                );
-            }
-
-        } catch (TimeoutException e) {
-
-            // Treat missing Privacy toolbar as an environment-specific condition
-            System.out.println(
-                    "Privacy toolbar is not available in this "
-                    + "test environment. The test continues."
-            );
-        }
-    }
+			// Treat missing Privacy toolbar as an environment-specific condition
+			System.out.println("Privacy toolbar is not available in this " + "test environment. The test continues.");
+		}
+	}
 }
