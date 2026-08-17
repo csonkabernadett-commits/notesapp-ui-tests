@@ -32,7 +32,7 @@ public class PrivacyTest {
         ChromeOptions options = new ChromeOptions();
 
         // CI környezetben headless mód
-        options.addArguments("--headless=new");
+        //options.addArguments("--headless=new");
 
         // Full HD felbontás
         options.addArguments("--window-size=1920,1080");
