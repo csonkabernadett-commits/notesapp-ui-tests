@@ -27,3 +27,11 @@ jobs:
           name: privacy-surefire-report
           path: target/surefire-reports
           if-no-files-found: ignore
+          
+      - name: Upload Privacy screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: privacy-screenshots
+          path: privacy-diagnostics
+          if-no-files-found: ignore   

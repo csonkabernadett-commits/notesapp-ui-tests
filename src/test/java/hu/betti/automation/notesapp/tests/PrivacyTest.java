@@ -2,10 +2,17 @@ package hu.betti.automation.notesapp.tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -34,8 +41,6 @@ public class PrivacyTest {
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
-        
-        ChromeDriver chromeDriver = new ChromeDriver(options);
 
         // Nincs reklámblokkolás a PrivacyTest-ben.
         driver = new ChromeDriver(options);
@@ -49,67 +54,64 @@ public class PrivacyTest {
         }
     }
 
+    private void takeScreenshot(String name) {
+
+        try {
+            File screenshot = ((TakesScreenshot) driver)
+                    .getScreenshotAs(OutputType.FILE);
+
+            Path target = Path.of(
+                    "privacy-diagnostics",
+                    name + ".png"
+            );
+
+            Files.createDirectories(target.getParent());
+
+            Files.copy(
+                    screenshot.toPath(),
+                    target,
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+
+            System.out.println("Screenshot saved: " + target);
+
+        } catch (Exception e) {
+            System.out.println(
+                    "Could not save screenshot " + name + ": "
+                            + e.getMessage()
+            );
+        }
+    }
+
     @Test
     void privacySettingsTest() {
 
         HomePage homePage = new HomePage(driver);
 
         homePage.open();
+
+        takeScreenshot("01-after-open");
+
         homePage.scrollToPrivacy();
 
-        // Privacy DOM diagnosztika
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
-        Object result = js.executeScript("""
-            const result = [];
-
-            result.push('BODY DIV COUNT: ' + document.querySelectorAll('body > div').length);
-
-            document.querySelectorAll('body > div').forEach((el, index) => {
-                result.push(
-                    'DIV ' + index +
-                    ' id=' + (el.id || '') +
-                    ' class=' + (el.className || '') +
-                    ' shadowRoot=' + (el.shadowRoot !== null)
-                );
-            });
-
-            result.push(
-                'DIRECT TOOLBAR: ' +
-                (document.querySelector('#ft-floating-toolbar') !== null)
-            );
-
-            return result;
+        Object scrollInfo = js.executeScript("""
+            return {
+                scrollY: window.scrollY,
+                innerHeight: window.innerHeight,
+                scrollHeight: document.documentElement.scrollHeight
+            };
         """);
-        
-        Object privacySearch = js.executeScript("""
-        	    const result = [];
 
-        	    const html = document.documentElement.outerHTML;
+        System.out.println("=== SCROLL INFO ===");
+        System.out.println(scrollInfo);
 
-        	    const terms = [
-        	        'ft-floating-toolbar',
-        	        'privacy',
-        	        'Privacy',
-        	        'legal',
-        	        'cookie'
-        	    ];
+        takeScreenshot("02-after-scroll");
 
-        	    for (const term of terms) {
-        	        result.push(term + ': ' + html.includes(term));
-        	    }
-
-        	    return result;
-        	""");
-
-        	System.out.println("=== PRIVACY TEXT SEARCH ===");
-        	System.out.println(privacySearch);
-
-        System.out.println("=== PRIVACY DOM DIAGNOSTICS ===");
-        System.out.println(result);
-
-    
         homePage.clickPrivacyIcon();
+
+        takeScreenshot("03-after-privacy-click");
 
         assertTrue(homePage.isPrivacySettingsDisplayed());
     }
