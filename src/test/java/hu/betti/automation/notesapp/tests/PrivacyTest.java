@@ -77,10 +77,23 @@ public class PrivacyTest {
 
             return findToolbar(document);
         """);
-
+        
         System.out.println("=== PRIVACY TOOLBAR EXISTS ===");
         System.out.println(toolbarExists);
         
+        
+        Object cmpInfo = js.executeScript("""
+        	    return [...document.querySelectorAll('iframe')].map(frame => ({
+        	        id: frame.id,
+        	        name: frame.name,
+        	        src: frame.src
+        	    }));
+        	""");
+
+        	System.out.println("=== CMP IFRAMES ===");
+        	System.out.println(cmpInfo);
+        	
+
         
        //homePage.scrollToPrivacy();
 
