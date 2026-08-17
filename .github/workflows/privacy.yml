@@ -15,17 +15,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
-          
-      - name: Check runner network location
-        shell: bash
-        run: |
-          echo "=== PUBLIC IP ==="
-          curl -s https://api.ipify.org
-          echo
-          echo "=== IP GEOLOCATION ==="
-          curl -s https://ipinfo.io/json    
-          
+          java-version: '21'     
 
       - name: Run PrivacyTest
         run: mvn -B -Dtest=PrivacyTest test

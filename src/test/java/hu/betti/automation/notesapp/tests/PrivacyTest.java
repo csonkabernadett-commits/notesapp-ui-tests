@@ -27,23 +27,20 @@ public class PrivacyTest {
     @BeforeEach
     void setUp() {
 
-        WebDriverManager.chromedriver().setup();
+    	 WebDriverManager.chromedriver().setup();
+    	 
+         ChromeOptions options = new ChromeOptions();
+         options.addArguments("--incognito");
+         
+         if (System.getProperty("CI") != null) {
+             options.addArguments("--headless=new");
+             options.addArguments("--window-size=1400,900");
+         }
+         driver = new ChromeDriver(options);
 
-        ChromeOptions options = new ChromeOptions();
+         driver.manage().window().maximize();
 
-        // CI környezetben headless mód
-        //options.addArguments("--headless=new");
-
-        // Full HD felbontás
-        options.addArguments("--window-size=1920,1080");
-
-        // CI környezethez
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-
-        // Nincs reklámblokkolás a PrivacyTest-ben.
-        driver = new ChromeDriver(options);
+         new HomePage(driver).open();
     }
 
     @AfterEach
