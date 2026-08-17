@@ -1,17 +1,17 @@
 package hu.betti.automation.notesapp.tests;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.WebDriver;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import hu.betti.automation.notesapp.pages.HomePage;
@@ -29,6 +29,7 @@ public class PrivacyTest {
 
         options.addArguments("--headless=new");
         options.addArguments("--window-size=1920,1080");
+        options.addArguments("--lang=hu-HU");
 
         options.setExperimentalOption(
                 "excludeSwitches",
@@ -36,6 +37,15 @@ public class PrivacyTest {
         );
 
         driver = new ChromeDriver(options);
+
+        // Budapest timezone beállítása a GitHub Actions Linux runneren
+        Map<String, Object> timezone = new HashMap<>();
+        timezone.put("timezoneId", "Europe/Budapest");
+
+        ((ChromeDriver) driver).executeCdpCommand(
+                "Emulation.setTimezoneOverride",
+                timezone
+        );
     }
 
     @AfterEach
@@ -53,10 +63,14 @@ public class PrivacyTest {
 
         homePage.open();
 
-        // Várunk, hogy az aszinkron Google CMP teljesen inicializálódjon.
+        // Várunk az aszinkron Google CMP inicializálására
         Thread.sleep(15000);
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        // =========================================================
+        // 1. Privacy toolbar keresése a DOM / Shadow DOM alatt
+        // =========================================================
 
         Boolean toolbarExists = (Boolean) js.executeScript("""
             function findToolbar(root) {
@@ -86,6 +100,11 @@ public class PrivacyTest {
         System.out.println("=== PRIVACY TOOLBAR EXISTS AFTER 15 SEC ===");
         System.out.println(toolbarExists);
 
+
+        // =========================================================
+        // 2. Google CMP iframe-ek listázása
+        // =========================================================
+
         Object cmpInfo = js.executeScript("""
             return [...document.querySelectorAll('iframe')].map(frame => ({
                 id: frame.id,
@@ -96,26 +115,33 @@ public class PrivacyTest {
 
         System.out.println("=== CMP IFRAMES AFTER 15 SEC ===");
         System.out.println(cmpInfo);
-        
+
+
+        // =========================================================
+        // 3. Böngésző privacy / locale környezet
+        // =========================================================
+
         Object privacyState = js.executeScript("""
-        	    return {
-        	        language: navigator.language,
-        	        languages: navigator.languages,
-        	        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        	        cookieEnabled: navigator.cookieEnabled,
-        	        doNotTrack: navigator.doNotTrack,
-        	        url: window.location.href
-        	    };
-        	""");
+            return {
+                language: navigator.language,
+                languages: navigator.languages,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                cookieEnabled: navigator.cookieEnabled,
+                doNotTrack: navigator.doNotTrack,
+                url: window.location.href
+            };
+        """);
 
-        	System.out.println("=== BROWSER PRIVACY ENVIRONMENT ===");
-        	System.out.println(privacyState);
+        System.out.println("=== BROWSER PRIVACY ENVIRONMENT ===");
+        System.out.println(privacyState);
 
-        /*
-        homePage.scrollToPrivacy();
-        homePage.clickPrivacyIcon();
 
-        assertTrue(homePage.isPrivacySettingsDisplayed());
-        */
+        // =========================================================
+        // Privacy kattintás szándékosan nincs még bekapcsolva.
+        //
+        // homePage.scrollToPrivacy();
+        // homePage.clickPrivacyIcon();
+        // assertTrue(homePage.isPrivacySettingsDisplayed());
+        // =========================================================
     }
 }
