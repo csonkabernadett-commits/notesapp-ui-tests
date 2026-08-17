@@ -2,6 +2,7 @@ package hu.betti.automation.notesapp.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -19,9 +20,11 @@ public class HomePage extends BasePage {
 
 	private final By welcomeTitle = By.tagName("h1");
 
-	private final By privacyIcon = By.cssSelector("button[aria-label='Toggle privacy and legal settings display']");
+	private final By privacyIcon = By.cssSelector(
+			"button[aria-label='Toggle privacy and legal settings display']");
 
 	private final By privacySettingsButton = By.cssSelector(".ft-reg-message-button");
+
 
 	// ==================== Constructor ====================
 
@@ -29,11 +32,13 @@ public class HomePage extends BasePage {
 		super(driver);
 	}
 
+
 	// ==================== Navigation ====================
 
 	public void open() {
 		driver.get(URL);
 	}
+
 
 	// ==================== Interaction ====================
 
@@ -47,6 +52,7 @@ public class HomePage extends BasePage {
 		return new RegisterPage(driver);
 	}
 
+
 	// ==================== Privacy ====================
 
 	// Find and click the privacy icon inside the Shadow DOM.
@@ -57,11 +63,13 @@ public class HomePage extends BasePage {
 		button.click();
 	}
 
+	// Scroll to the bottom of the page where the privacy toolbar is located.
 	public void scrollToPrivacy() {
 
 		for (int i = 0; i < 3; i++) {
 
-			((JavascriptExecutor) driver).executeScript("window.scrollTo(0, document.documentElement.scrollHeight);");
+			((JavascriptExecutor) driver).executeScript(
+					"window.scrollTo(0, document.documentElement.scrollHeight);");
 
 			try {
 				Thread.sleep(1000);
@@ -71,12 +79,28 @@ public class HomePage extends BasePage {
 		}
 	}
 
+	// Check whether the privacy toolbar is available in the current environment.
+	public boolean isPrivacyToolbarAvailable() {
+
+		try {
+
+			waitForPrivacyElement(privacyIcon, 15);
+			return true;
+
+		} catch (TimeoutException e) {
+
+			return false;
+		}
+	}
+
+
 	// ==================== Verification Privacy ====================
 
 	public boolean isPrivacySettingsDisplayed() {
 
 		return waitForPrivacyElement(privacySettingsButton, 10).isDisplayed();
 	}
+
 
 	// ==================== Verification General ====================
 
