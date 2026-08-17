@@ -2,14 +2,14 @@ package hu.betti.automation.notesapp.tests;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.Duration;
+import java.util.Collections;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -29,9 +29,11 @@ public class PrivacyTest {
 
         options.addArguments("--headless=new");
         options.addArguments("--window-size=1920,1080");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
+
+        options.setExperimentalOption(
+                "excludeSwitches",
+                Collections.singletonList("enable-automation")
+        );
 
         driver = new ChromeDriver(options);
     }
@@ -45,12 +47,15 @@ public class PrivacyTest {
     }
 
     @Test
-    void privacySettingsTest() {
+    void privacySettingsTest() throws InterruptedException {
 
         HomePage homePage = new HomePage(driver);
 
         homePage.open();
-        
+
+        // Várunk, hogy az aszinkron Google CMP teljesen inicializálódjon.
+        Thread.sleep(15000);
+
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
         Boolean toolbarExists = (Boolean) js.executeScript("""
@@ -77,28 +82,26 @@ public class PrivacyTest {
 
             return findToolbar(document);
         """);
-        
-        System.out.println("=== PRIVACY TOOLBAR EXISTS ===");
+
+        System.out.println("=== PRIVACY TOOLBAR EXISTS AFTER 15 SEC ===");
         System.out.println(toolbarExists);
-        
-        
+
         Object cmpInfo = js.executeScript("""
-        	    return [...document.querySelectorAll('iframe')].map(frame => ({
-        	        id: frame.id,
-        	        name: frame.name,
-        	        src: frame.src
-        	    }));
-        	""");
+            return [...document.querySelectorAll('iframe')].map(frame => ({
+                id: frame.id,
+                name: frame.name,
+                src: frame.src
+            }));
+        """);
 
-        	System.out.println("=== CMP IFRAMES ===");
-        	System.out.println(cmpInfo);
-        	
+        System.out.println("=== CMP IFRAMES AFTER 15 SEC ===");
+        System.out.println(cmpInfo);
 
-        
-       //homePage.scrollToPrivacy();
+        /*
+        homePage.scrollToPrivacy();
+        homePage.clickPrivacyIcon();
 
-       //homePage.clickPrivacyIcon();
-
-       //assertTrue(homePage.isPrivacySettingsDisplayed());
+        assertTrue(homePage.isPrivacySettingsDisplayed());
+        */
     }
 }
