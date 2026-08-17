@@ -13,6 +13,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.WebDriver;
 
+import java.util.Map;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
 import hu.betti.automation.notesapp.pages.HomePage;
 
@@ -30,6 +32,8 @@ public class PrivacyTest {
         options.addArguments("--headless=new");
         options.addArguments("--window-size=1920,1080");
         options.addArguments("--lang=hu-HU");
+        options.addArguments("--timezone=Europe/Budapest");
+        options.addArguments("--disable-blink-features=AutomationControlled");
 
         options.setExperimentalOption(
                 "excludeSwitches",
@@ -38,14 +42,35 @@ public class PrivacyTest {
 
         driver = new ChromeDriver(options);
 
-        // Budapest timezone beállítása a GitHub Actions Linux runneren
-        Map<String, Object> timezone = new HashMap<>();
-        timezone.put("timezoneId", "Europe/Budapest");
-
+        // Magyar locale kényszerítése JavaScript oldalon
         ((ChromeDriver) driver).executeCdpCommand(
                 "Emulation.setTimezoneOverride",
-                timezone
+                Map.of("timezoneId", "Europe/Budapest")
         );
+
+        ((ChromeDriver) driver).executeCdpCommand(
+                "Emulation.setLocaleOverride",
+                Map.of("locale", "hu-HU")
+        );
+
+        ((ChromeDriver) driver).executeCdpCommand(
+                "Page.addScriptToEvaluateOnNewDocument",
+                Map.of(
+                        "source",
+                        """
+                        Object.defineProperty(navigator, 'language', {
+                            get: () => 'hu-HU'
+                        });
+
+                        Object.defineProperty(navigator, 'languages', {
+                            get: () => ['hu-HU', 'hu', 'en-US', 'en']
+                        });
+                        """
+                )
+        );
+
+        new HomePage(driver).open();
+        
     }
 
     @AfterEach
@@ -64,7 +89,7 @@ public class PrivacyTest {
         homePage.open();
 
         // Várunk az aszinkron Google CMP inicializálására
-        Thread.sleep(15000);
+        Thread.sleep(25000);
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
