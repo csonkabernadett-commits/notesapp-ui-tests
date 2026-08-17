@@ -57,37 +57,47 @@ public class PrivacyTest {
         
         JavascriptExecutor js = (JavascriptExecutor) driver;
 
-        Object iframeInfo = js.executeScript("""
-            const result = [];
+        Object toolbarInfo = js.executeScript("""
+                function findElement(root, selector) {
 
-            document.querySelectorAll('iframe').forEach((iframe, index) => {
-                result.push(
-                    'IFRAME ' + index +
-                    ' src=' + (iframe.src || '') +
-                    ' title=' + (iframe.title || '') +
-                    ' id=' + (iframe.id || '') +
-                    ' name=' + (iframe.name || '')
-                );
-            });
+                    const direct = root.querySelector(selector);
 
-            result.push('IFRAME COUNT: ' + document.querySelectorAll('iframe').length);
+                    if (direct) {
+                        return direct;
+                    }
 
-            document.querySelectorAll('*').forEach((el, index) => {
-                if (el.shadowRoot) {
-                    result.push(
-                        'SHADOW HOST ' + index +
-                        ' tag=' + el.tagName +
-                        ' id=' + (el.id || '') +
-                        ' class=' + (el.className || '')
-                    );
+                    const elements = root.querySelectorAll('*');
+
+                    for (const el of elements) {
+                        if (el.shadowRoot) {
+                            const found = findElement(el.shadowRoot, selector);
+
+                            if (found) {
+                                return found;
+                            }
+                        }
+                    }
+
+                    return null;
                 }
-            });
 
-            return result;
-        """);
+                const toolbar = findElement(document, '#ft-floating-toolbar');
 
-        System.out.println("=== IFRAME / SHADOW DOM DIAGNOSTICS ===");
-        System.out.println(iframeInfo);
+                if (!toolbar) {
+                    return 'NOT FOUND';
+                }
+
+                return {
+                    tagName: toolbar.tagName,
+                    id: toolbar.id,
+                    text: toolbar.innerText || '',
+                    html: toolbar.outerHTML.substring(0, 2000)
+                };
+            """);
+
+            System.out.println("=== PRIVACY TOOLBAR SEARCH ===");
+            System.out.println(toolbarInfo);
+
         
         homePage.clickPrivacyIcon();
 
